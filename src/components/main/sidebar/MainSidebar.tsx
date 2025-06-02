@@ -24,7 +24,7 @@ const MainSidebar: FC<StateProps> = ({
         <WorkspaceSelector emoji="✨" title="Personal" selected />
         <WorkspaceSelector emoji="👨‍💻" title="Dev" />
       </div>
-      <Avatar className={styles.profile} peer={peer} size="xl" />
+      <Avatar className={styles.profile} peer={peer} size="xl" forceRoundedRect />
     </div>
   );
 };

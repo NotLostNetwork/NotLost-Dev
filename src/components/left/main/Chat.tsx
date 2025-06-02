@@ -33,7 +33,6 @@ import {
   selectCurrentMessageList,
   selectDraft,
   selectIsCurrentUserFrozen,
-  selectIsForumPanelClosed,
   selectIsForumPanelOpen,
   selectNotifyDefaults,
   selectNotifyException,
@@ -53,7 +52,6 @@ import buildClassName from '../../../util/buildClassName';
 import { isUserId } from '../../../util/entities/ids';
 import { createLocationHash } from '../../../util/routing';
 
-import useSelectorSignal from '../../../hooks/data/useSelectorSignal';
 import useAppLayout from '../../../hooks/useAppLayout';
 import useChatContextActions from '../../../hooks/useChatContextActions';
 import useEnsureMessage from '../../../hooks/useEnsureMessage';
@@ -66,13 +64,10 @@ import useChatListEntry from './hooks/useChatListEntry';
 import Avatar from '../../common/Avatar';
 import DeleteChatModal from '../../common/DeleteChatModal';
 import FullNameTitle from '../../common/FullNameTitle';
-import Icon from '../../common/icons/Icon';
 import StarIcon from '../../common/icons/StarIcon';
-import LastMessageMeta from '../../common/LastMessageMeta';
 import ListItem from '../../ui/ListItem';
 import ChatFolderModal from '../ChatFolderModal.async';
 import MuteChatModal from '../MuteChatModal.async';
-import ChatBadge from './ChatBadge';
 import ChatCallStatus from './ChatCallStatus';
 
 import './Chat.scss';
@@ -133,7 +128,7 @@ const Chat: FC<OwnProps & StateProps> = ({
   user,
   userStatus,
   lastMessageSender,
-  lastMessageOutgoingStatus,
+  // lastMessageOutgoingStatus,
   offsetTop,
   draft,
   withInterfaceAnimations,
@@ -181,7 +176,7 @@ const Chat: FC<OwnProps & StateProps> = ({
 
   useEnsureMessage(isSavedDialog ? currentUserId : chatId, lastMessageId, lastMessage);
 
-  const { renderSubtitle, ref } = useChatListEntry({
+  const { /* renderSubtitle, */ ref } = useChatListEntry({
     chat,
     chatId,
     lastMessage,
@@ -199,7 +194,7 @@ const Chat: FC<OwnProps & StateProps> = ({
     topics,
   });
 
-  const getIsForumPanelClosed = useSelectorSignal(selectIsForumPanelClosed);
+  // const getIsForumPanelClosed = useSelectorSignal(selectIsForumPanelClosed);
 
   const handleClick = useLastCallback(() => {
     const noForumTopicPanel = isMobile && isForumAsMessages;
@@ -325,6 +320,20 @@ const Chat: FC<OwnProps & StateProps> = ({
     return `#${createLocationHash(chatId, 'thread', MAIN_THREAD_ID)}`;
   }, [chatId, currentUserId, isSavedDialog]);
 
+  const topicsWithUnread = useMemo(() => (
+    isForum && topics ? Object.values(topics).filter(({ unreadCount }) => unreadCount) : undefined
+  ), [topics, isForum]);
+
+  const unreadCount = useMemo(() => {
+    if (!isForum && chat) {
+      return chat.unreadCount;
+    }
+
+    return topicsWithUnread?.length;
+  }, [chat, topicsWithUnread, isForum]);
+
+  const isUnread = Boolean(unreadCount);
+
   if (!chat) {
     return undefined;
   }
@@ -334,7 +343,6 @@ const Chat: FC<OwnProps & StateProps> = ({
   const chatClassName = buildClassName(
     'Chat chat-item-clickable',
     isUserId(chatId) ? 'private' : 'group',
-    isForum && 'forum',
     isSelected && 'selected',
     isSelectedForum && 'selected-forum',
     isPreview && 'standalone',
@@ -358,7 +366,8 @@ const Chat: FC<OwnProps & StateProps> = ({
           peer={peer}
           isSavedMessages={user?.isSelf}
           isSavedDialog={isSavedDialog}
-          size={isPreview ? 'medium' : 'large'}
+          size={isPreview ? 'small' : 'medium'}
+          forceRoundedRect
           withStory={!user?.isSelf}
           withStoryGap={isAvatarOnlineShown || Boolean(chat.subscriptionUntil)}
           storyViewerOrigin={StoryViewerOrigin.ChatList}
@@ -371,14 +380,14 @@ const Chat: FC<OwnProps & StateProps> = ({
           {!isAvatarOnlineShown && Boolean(chat.subscriptionUntil) && (
             <StarIcon type="gold" className="avatar-badge avatar-subscription" size="adaptive" />
           )}
-          <ChatBadge
+          {/* <ChatBadge
             chat={chat}
             isMuted={isMuted}
             shouldShowOnlyMostImportant
             forceHidden={getIsForumPanelClosed}
             topics={topics}
             isSelected={isSelected}
-          />
+          /> */}
         </div>
         {chat.isCallActive && chat.isCallNotEmpty && (
           <ChatCallStatus isMobile={isMobile} isSelected={isSelected} isActive={withInterfaceAnimations} />
@@ -393,18 +402,18 @@ const Chat: FC<OwnProps & StateProps> = ({
             isSavedDialog={isSavedDialog}
             observeIntersection={observeIntersection}
           />
-          {isMuted && !isSavedDialog && <Icon name="muted" />}
-          <div className="separator" />
+          {isUnread
+            && <div className={`unread-indicator ${isMuted && 'muted'}`} />}
+          {/* <div className="separator" />
           {lastMessage && (
             <LastMessageMeta
               message={lastMessage}
               outgoingStatus={!isSavedDialog ? lastMessageOutgoingStatus : undefined}
               draftDate={draft?.date}
             />
-          )}
+          )} */}
         </div>
-        <div className="subtitle">
-          {renderSubtitle()}
+        {/* <div className="subtitle">
           {!isPreview && (
             <ChatBadge
               chat={chat}
@@ -416,7 +425,7 @@ const Chat: FC<OwnProps & StateProps> = ({
               isSelected={isSelected}
             />
           )}
-        </div>
+        </div> */}
       </div>
       {shouldRenderDeleteModal && (
         <DeleteChatModal
