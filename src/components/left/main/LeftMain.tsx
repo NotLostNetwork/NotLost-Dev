@@ -23,8 +23,8 @@ import LeftSearch from '../search/LeftSearch.async';
 import ChatFolders from './ChatFolders';
 import ContactList from './ContactList.async';
 import ForumPanel from './ForumPanel';
-import LeftMainHeader from './LeftMainHeader';
 
+// import LeftMainHeader from './LeftMainHeader';
 import './LeftMain.scss';
 
 type OwnProps = {
@@ -53,19 +53,19 @@ const LeftMain: FC<OwnProps> = ({
   content,
   searchQuery,
   searchDate,
-  isClosingSearch,
+  /* isClosingSearch, */
   contactsFilter,
   shouldSkipTransition,
   foldersDispatch,
   isAppUpdateAvailable,
   isElectronUpdateAvailable,
   isForumPanelOpen,
-  onSearchQuery,
+  /* onSearchQuery, */
   onReset,
   onTopicSearch,
   isAccountFrozen,
 }) => {
-  const { closeForumPanel, openLeftColumnContent } = getActions();
+  const { /* closeForumPanel */ openLeftColumnContent } = getActions();
   const [isNewChatButtonShown, setIsNewChatButtonShown] = useState(IS_TOUCH_ENV);
   const [isElectronAutoUpdateEnabled, setIsElectronAutoUpdateEnabled] = useState(false);
 
@@ -110,18 +110,18 @@ const LeftMain: FC<OwnProps> = ({
     }, BUTTON_CLOSE_DELAY_MS);
   });
 
-  const handleSelectSettings = useLastCallback(() => {
+  /* const handleSelectSettings = useLastCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.Settings });
-  });
+  }); */
 
   const handleSelectContacts = useLastCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.Contacts });
   });
 
-  const handleSelectArchived = useLastCallback(() => {
+  /* const handleSelectArchived = useLastCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.Archived });
     closeForumPanel();
-  });
+  }); */
 
   const handleUpdateClick = useLastCallback(() => {
     if (IS_ELECTRON && !isElectronAutoUpdateEnabled) {
@@ -167,7 +167,7 @@ const LeftMain: FC<OwnProps> = ({
       onMouseEnter={!IS_TOUCH_ENV ? handleMouseEnter : undefined}
       onMouseLeave={!IS_TOUCH_ENV ? handleMouseLeave : undefined}
     >
-      <LeftMainHeader
+      {/* <LeftMainHeader
         shouldHideSearch={isForumPanelVisible}
         content={content}
         contactsFilter={contactsFilter}
@@ -178,7 +178,7 @@ const LeftMain: FC<OwnProps> = ({
         onReset={onReset}
         shouldSkipTransition={shouldSkipTransition}
         isClosingSearch={isClosingSearch}
-      />
+      /> */}
       <Transition
         name={shouldSkipTransition ? 'none' : 'zoomFade'}
         renderCount={TRANSITION_RENDER_COUNT}
