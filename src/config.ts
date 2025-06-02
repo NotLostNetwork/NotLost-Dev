@@ -371,7 +371,7 @@ export const FRAGMENT_PHONE_CODE = '888';
 export const FRAGMENT_PHONE_LENGTH = 11;
 
 export const LIGHT_THEME_BG_COLOR = '#99BA92';
-export const DARK_THEME_BG_COLOR = '#0F0F0F';
+export const DARK_THEME_BG_COLOR = '#1E1E1E';
 export const DEFAULT_PATTERN_COLOR = '#4A8E3A8C';
 export const DARK_THEME_PATTERN_COLOR = '#0A0A0A8C';
 export const PEER_COLOR_BG_OPACITY = '1a';
