@@ -44,6 +44,8 @@ import Icon from './icons/Icon';
 
 import './Avatar.scss';
 
+import hexMask from '../../assets/hex.svg';
+
 const LOOP_COUNT = 3;
 
 export const AVATAR_SIZES = {
@@ -250,6 +252,8 @@ const Avatar: FC<OwnProps> = ({
   const isRoundedRect = forceRoundedRect || (isCustomPeer && peer.isAvatarSquare)
     || (isForum && !((withStory || withStorySolid) && realPeer?.hasStories));
 
+  const isHexagonalRect = isForum;
+
   const isPremiumGradient = isCustomPeer && peer.withPremiumGradient;
   const customColor = isCustomPeer && peer.customPeerAvatarColor;
 
@@ -263,7 +267,8 @@ const Avatar: FC<OwnProps> = ({
     isDeleted && 'deleted-account',
     isReplies && 'replies-bot-account',
     isPremiumGradient && 'premium-gradient-bg',
-    isRoundedRect && 'forum',
+    isRoundedRect && 'roundedRect',
+    isHexagonalRect && 'hex',
     (photo || webPhoto) && 'force-fit',
     ((withStory && realPeer?.hasStories) || forPremiumPromo) && 'with-story-circle',
     withStorySolid && realPeer?.hasStories && 'with-story-solid',
@@ -271,6 +276,12 @@ const Avatar: FC<OwnProps> = ({
     withStorySolid && (realPeer?.hasUnreadStories || forceUnreadStorySolid) && 'has-unread-story',
     onClick && 'interactive',
     (!isSavedMessages && !imgUrl) && 'no-photo',
+  );
+
+  const fullStyle = buildStyle(
+    `--_size: ${pxSize}px;`,
+    customColor && `--color-user: ${customColor}`,
+    isHexagonalRect && `mask-image: url(${hexMask})`,
   );
 
   const hasMedia = Boolean(isSavedMessages || imgUrl);
@@ -300,7 +311,7 @@ const Avatar: FC<OwnProps> = ({
       data-peer-id={realPeer?.id}
       data-test-sender-id={IS_TEST ? realPeer?.id : undefined}
       aria-label={typeof content === 'string' ? author : undefined}
-      style={buildStyle(`--_size: ${pxSize}px;`, customColor && `--color-user: ${customColor}`)}
+      style={fullStyle}
       onClick={handleClick}
       onContextMenu={onContextMenu}
       onMouseDown={handleMouseDown}
