@@ -266,13 +266,9 @@
     .status,
     .typing-status {
       overflow: hidden;
-
-      margin: 0;
-
-      font-size: 1rem;
-      text-align: initial;
-      text-overflow: ellipsis;
       white-space: nowrap;
+      text-overflow: clip;
+      text-align: initial;
     }
 
     h3,
@@ -283,6 +279,7 @@
 
     .title {
       h3 {
+        font-size: 0.875rem;
         font-weight: var(--font-weight-medium);
       }
     }

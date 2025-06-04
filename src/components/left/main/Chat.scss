@@ -555,13 +555,22 @@
 
     .unread-indicator {
       margin-left: auto;
-      padding-left: 8px;
-      min-height: 8px;
-      min-width: 8px;
-      border-radius: 50%;
-      background-color: var(--color-error);
+      padding-left: 16px;
+      position: relative;
 
-      &.muted {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background-color: var(--color-error);
+      }
+
+      &.muted::after {
         background-color: var(--color-text-secondary);
       }
     }
