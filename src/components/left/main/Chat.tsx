@@ -1,5 +1,7 @@
 import type { FC } from '../../../lib/teact/teact';
-import { memo, useEffect, useMemo } from '../../../lib/teact/teact';
+import {
+  memo, useEffect, useMemo, useState,
+} from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
 
 import type {
@@ -176,7 +178,7 @@ const Chat: FC<OwnProps & StateProps> = ({
 
   useEnsureMessage(isSavedDialog ? currentUserId : chatId, lastMessageId, lastMessage);
 
-  const { /* renderSubtitle, */ ref } = useChatListEntry({
+  const { renderSubtitle, ref } = useChatListEntry({
     chat,
     chatId,
     lastMessage,
@@ -195,6 +197,8 @@ const Chat: FC<OwnProps & StateProps> = ({
   });
 
   // const getIsForumPanelClosed = useSelectorSignal(selectIsForumPanelClosed);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = useLastCallback(() => {
     const noForumTopicPanel = isMobile && isForumAsMessages;
@@ -362,17 +366,23 @@ const Chat: FC<OwnProps & StateProps> = ({
       withPortalForMenu
     >
       <div className={buildClassName('status', 'status-clickable')}>
-        <Avatar
-          peer={peer}
-          isSavedMessages={user?.isSelf}
-          isSavedDialog={isSavedDialog}
-          size={isPreview ? 'small' : 'medium'}
-          forceRoundedRect
-          withStory={!user?.isSelf}
-          withStoryGap={isAvatarOnlineShown || Boolean(chat.subscriptionUntil)}
-          storyViewerOrigin={StoryViewerOrigin.ChatList}
-          storyViewerMode="single-peer"
-        />
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <Avatar
+            peer={peer}
+            isSavedMessages={user?.isSelf}
+            isSavedDialog={isSavedDialog}
+            size={isPreview ? 'small' : 'medium'}
+            forceRoundedRect
+            withStory={!user?.isSelf}
+            withStoryGap={isAvatarOnlineShown || Boolean(chat.subscriptionUntil)}
+            storyViewerOrigin={StoryViewerOrigin.ChatList}
+            storyViewerMode="single-peer"
+          />
+        </div>
+
         <div className="avatar-badge-wrapper">
           <div
             className={buildClassName('avatar-online', 'avatar-badge', isAvatarOnlineShown && 'avatar-online-shown')}
@@ -395,13 +405,18 @@ const Chat: FC<OwnProps & StateProps> = ({
       </div>
       <div className="info">
         <div className="info-row">
-          <FullNameTitle
-            peer={peer}
-            withEmojiStatus
-            isSavedMessages={chatId === user?.id && user?.isSelf}
-            isSavedDialog={isSavedDialog}
-            observeIntersection={observeIntersection}
-          />
+          {isHovered
+            ? renderSubtitle()
+            : (
+              <FullNameTitle
+                peer={peer}
+                withEmojiStatus
+                isSavedMessages={chatId === user?.id && user?.isSelf}
+                isSavedDialog={isSavedDialog}
+                observeIntersection={observeIntersection}
+              />
+            )}
+
           {isUnread
             && <div className={`unread-indicator ${isMuted && 'muted'}`} />}
           {/* <div className="separator" />
