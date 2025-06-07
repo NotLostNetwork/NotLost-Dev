@@ -1,0 +1,86 @@
+.Container {
+  width: 100%;
+}
+
+.Container :global(.ListItem-button) {
+  padding-left: 0.5rem !important;
+}
+
+.Header {
+  height: 1.875rem;
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0 0.5rem;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--border-radius-default-tiny);
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: var(--color-chat-hover);
+
+    &.sidebarTab {
+      background-color: var(--color-background-secondary);
+      color: #6B6B6B;
+    }
+    i {
+      opacity: 1
+    }
+  }
+
+  &:active {
+    transition: none;
+    background-color: rgba(var(--color-chat-hover), 0.75);
+  }
+
+  :global(.icon) {
+    padding: 0.125rem;
+    border-radius: var(--border-radius-default-tiny);
+    transition: all 0.15s ease;
+    color: var(--color-text-secondary);
+
+    &:hover {
+      background-color: var(--color-borders);
+    }
+
+    &.rotate {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+.Title {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+
+  &.section {
+    font-size: 0.750rem;
+  }
+
+  &.sidebarTab {
+    color: #6B6B6B;
+  }
+}
+
+.Actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto;
+
+  :global(.icon) {
+    opacity: 0;
+  }
+}
+
+.InnerContainer {
+  margin-top: 1px;
+
+  > * + * {
+    margin-top: 1px;
+  }
+}
+

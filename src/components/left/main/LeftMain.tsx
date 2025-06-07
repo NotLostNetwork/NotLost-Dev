@@ -23,6 +23,7 @@ import LeftSearch from '../search/LeftSearch.async';
 import ChatFolders from './ChatFolders';
 import ContactList from './ContactList.async';
 import ForumPanel from './ForumPanel';
+import Workspace from './Workspace';
 
 // import LeftMainHeader from './LeftMainHeader';
 import './LeftMain.scss';
@@ -190,6 +191,8 @@ const LeftMain: FC<OwnProps> = ({
       >
         {(isActive) => {
           switch (content) {
+            case LeftColumnContent.Workspace:
+              return <Workspace />;
             case LeftColumnContent.ChatList:
               return (
                 <ChatFolders

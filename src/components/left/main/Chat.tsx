@@ -17,6 +17,7 @@ import type {
   ApiUserStatus,
 } from '../../../api/types';
 import type { ObserveFn } from '../../../hooks/useIntersectionObserver';
+import type { AvatarSize } from '../../common/Avatar';
 import type { ChatAnimationTypes } from './hooks';
 import { MAIN_THREAD_ID } from '../../../api/types';
 import { StoryViewerOrigin } from '../../../types';
@@ -83,6 +84,8 @@ type OwnProps = {
   offsetTop?: number;
   isSavedDialog?: boolean;
   isPreview?: boolean;
+  isStatic?: boolean;
+  avatarSize?: AvatarSize;
   previewMessageId?: number;
   className?: string;
   observeIntersection?: ObserveFn;
@@ -146,6 +149,8 @@ const Chat: FC<OwnProps & StateProps> = ({
   isSavedDialog,
   currentUserId,
   isPreview,
+  isStatic,
+  avatarSize,
   previewMessageId,
   className,
   isSynced,
@@ -349,7 +354,7 @@ const Chat: FC<OwnProps & StateProps> = ({
     isUserId(chatId) ? 'private' : 'group',
     isSelected && 'selected',
     isSelectedForum && 'selected-forum',
-    isPreview && 'standalone',
+    Boolean(isPreview || isStatic) && 'standalone',
     className,
   );
 
@@ -374,7 +379,7 @@ const Chat: FC<OwnProps & StateProps> = ({
             peer={peer}
             isSavedMessages={user?.isSelf}
             isSavedDialog={isSavedDialog}
-            size={isPreview ? 'small' : 'medium'}
+            size={avatarSize || (isPreview ? 'small' : 'medium')}
             forceRoundedRect
             withStory={!user?.isSelf}
             withStoryGap={isAvatarOnlineShown || Boolean(chat.subscriptionUntil)}

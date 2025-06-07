@@ -1,0 +1,22 @@
+.Selector {
+  display: flex;
+  padding: 0.24rem 0.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  border-radius: var(--border-radius-default-tiny);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    background-color: var(--color-background-secondary);
+  }
+
+  &.selected {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-default);
+  }
+
+  i {
+    color: var(--color-links)
+  }
+}

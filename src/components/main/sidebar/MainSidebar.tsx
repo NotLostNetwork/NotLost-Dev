@@ -1,72 +1,67 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, { memo, useMemo } from '../../../lib/teact/teact';
-import { withGlobal } from '../../../global';
+import React, { memo } from '../../../lib/teact/teact';
+import { getActions, withGlobal } from '../../../global';
 
-import type { ApiPeer } from '../../../api/types';
+import { LeftColumnContent } from '../../../types';
 
-import { selectPeer } from '../../../global/selectors';
+import { selectTabState } from '../../../global/selectors';
 
-import useFlag from '../../../hooks/useFlag';
-
-import Avatar from '../../common/Avatar';
-import LeftSideMenuItems from '../../left/main/LeftSideMenuItems';
-import StatusButton from '../../left/main/StatusButton';
-import DropdownMenu from '../../ui/DropdownMenu';
-import WorkspaceSelector from './WorkspaceSelector';
+import InlineFolder from '../../left/main/InlineFolder';
+import MainSidebarTab from './MainSidebarTab';
+import MainSidebarTabProfile from './MainSidebarTabProfile';
 
 import styles from './MainSidebar.module.scss';
 
 type StateProps = {
-  peer?: ApiPeer;
+  leftColumnContentKey: LeftColumnContent;
 };
 
 const MainSidebar: FC<StateProps> = ({
-  peer,
+  leftColumnContentKey,
 }) => {
-  const [isBotMenuOpen, markBotMenuOpen, unmarkBotMenuOpen] = useFlag();
+  const { openLeftColumnContent } = getActions();
 
-  const MainMenuTriggerAvatar: FC<{ onTrigger: () => void; isOpen?: boolean }> = useMemo(() => {
-    return ({ onTrigger }) => (
-      <div onClick={onTrigger}>
-        <Avatar className={styles.profileAvatar} peer={peer} size="xl" forceRoundedRect />
-      </div>
-    );
-  }, [peer]);
+  const handleOpenInbox = () => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
+  };
+
+  const handleOpenWorkspace = () => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
+  };
+
   return (
     <div className={styles.container}>
-      <div className={styles.workspaceSelectorsContainer}>
-        <WorkspaceSelector emoji="✨" title="Personal" selected />
-        <WorkspaceSelector emoji="👨‍💻" title="Dev" />
-      </div>
-      <div className={styles.profileContainer}>
-        <div>
-          Search ⌘ + K
-        </div>
-        <div>
-          <StatusButton />
-        </div>
-        <DropdownMenu
-          trigger={MainMenuTriggerAvatar}
-          footer="Footer"
-          forceOpen={isBotMenuOpen}
-          positionX="left"
-          transformOriginX={200}
-          positionY="bottom"
-        >
-          <LeftSideMenuItems
-            /* onSelectArchived={onSelectArchived}
-            onSelectContacts={onSelectContacts}
-            onSelectSettings={onSelectSettings} */
+      <div className={styles.tabs}>
+        <InlineFolder isSection title="Account" isFoldersSection isSidebarTab orderedIds={[]}>
+          <MainSidebarTabProfile />
+        </InlineFolder>
+        <InlineFolder isSection title="Spaces" isFoldersSection isSidebarTab orderedIds={[]}>
+          <MainSidebarTab
+            iconName="lamp"
+            title="Personal"
             // eslint-disable-next-line react/jsx-no-bind
-            onSelectArchived={() => {}}
-            // eslint-disable-next-line react/jsx-no-bind
-            onSelectContacts={() => {}}
-            // eslint-disable-next-line react/jsx-no-bind
-            onSelectSettings={() => {}}
-            onBotMenuOpened={markBotMenuOpen}
-            onBotMenuClosed={unmarkBotMenuOpen}
+            onClick={handleOpenWorkspace}
+            isSelected={leftColumnContentKey === LeftColumnContent.Workspace}
           />
-        </DropdownMenu>
+          <MainSidebarTab title="Dev" iconName="keyboard" />
+        </InlineFolder>
+        <InlineFolder isSection title="Chats" isFoldersSection isSidebarTab orderedIds={[]}>
+          <MainSidebarTab
+            title="Unreads"
+            iconName="check"
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={handleOpenInbox}
+            isSelected={leftColumnContentKey === LeftColumnContent.ChatList}
+          />
+          <MainSidebarTab title="All" iconName="message-read" />
+          <MainSidebarTab title="Groups" iconName="group" />
+          <MainSidebarTab title="Channels" iconName="channel" />
+          <MainSidebarTab title="Bots" iconName="bots" />
+          <MainSidebarTab title="Archive" iconName="archive" />
+        </InlineFolder>
+        <InlineFolder isSection title="Saved" isFoldersSection isSidebarTab orderedIds={[]}>
+          <MainSidebarTab title="All" iconName="tag" />
+        </InlineFolder>
       </div>
     </div>
   );
@@ -74,9 +69,10 @@ const MainSidebar: FC<StateProps> = ({
 
 export default memo(withGlobal(
   (global): StateProps => {
-    const peer = selectPeer(global, global.currentUserId || '');
+    const tabState = selectTabState(global);
+    const leftColumnContentKey = tabState.leftColumn.contentKey;
     return {
-      peer,
+      leftColumnContentKey,
     };
   },
 )(MainSidebar));

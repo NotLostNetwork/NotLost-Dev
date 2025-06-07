@@ -555,7 +555,8 @@
 
     .unread-indicator {
       margin-left: auto;
-      padding-left: 16px;
+      padding-left: 1rem;
+      padding-right: 0.25rem;
       position: relative;
 
       &::after {
@@ -564,8 +565,8 @@
         top: 50%;
         right: 0;
         transform: translateY(-50%);
-        height: 8px;
-        width: 8px;
+        height: 0.5rem;
+        width: 0.5rem;
         border-radius: 50%;
         background-color: var(--color-error);
       }
