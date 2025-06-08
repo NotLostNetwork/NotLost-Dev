@@ -93,6 +93,7 @@ import type {
   ThreadId,
   WebPageMediaSize,
 } from '../../types';
+import type { IconName } from '../../types/icons';
 import type { WebApp, WebAppModalStateType, WebAppOutboundEvent } from '../../types/webapp';
 import type { DownloadableMedia } from '../helpers';
 import type { SharedState } from './sharedState';
@@ -2663,6 +2664,18 @@ export interface ActionPayloads {
   reportMessageDelivery: {
     chatId: string;
     messageId: number;
+  };
+
+  // Workspace
+  loadAllWorkspaces: undefined;
+  addNewWorkspace: {
+    title: string;
+    iconName: IconName;
+  };
+  setActiveWorkspaceId: string;
+  addNewFolderIntoWorkspace: {
+    workspaceId: string;
+    title: string;
   };
 }
 

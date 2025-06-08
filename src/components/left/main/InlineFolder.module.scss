@@ -76,11 +76,15 @@
   }
 }
 
-.InnerContainer {
+.Inner {
   margin-top: 1px;
 
   > * + * {
     margin-top: 1px;
+  }
+
+  &.insetInner {
+    padding-left: 0.5rem;
   }
 }
 

@@ -1,7 +1,8 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, { memo } from '../../../lib/teact/teact';
+import React, { memo, useCallback, useEffect } from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
 
+import type { ApiWorkspace } from '../../../api/notlost/types';
 import { LeftColumnContent } from '../../../types';
 
 import { selectTabState } from '../../../global/selectors';
@@ -13,39 +14,70 @@ import MainSidebarTabProfile from './MainSidebarTabProfile';
 import styles from './MainSidebar.module.scss';
 
 type StateProps = {
+  workspaces: ApiWorkspace[];
+  areWorkspacesLoaded: boolean;
   leftColumnContentKey: LeftColumnContent;
+  activeWorkspaceId: string | undefined;
 };
 
 const MainSidebar: FC<StateProps> = ({
+  workspaces,
+  areWorkspacesLoaded,
   leftColumnContentKey,
+  activeWorkspaceId,
 }) => {
-  const { openLeftColumnContent } = getActions();
+  const {
+    loadAllWorkspaces, addNewWorkspace, openLeftColumnContent, setActiveWorkspaceId,
+  } = getActions();
 
   const handleOpenInbox = () => {
     openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
   };
 
-  const handleOpenWorkspace = () => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
+  const setActiveWorkspace = (id: string) => {
+    if (leftColumnContentKey !== LeftColumnContent.Workspace) {
+      openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
+    }
+    setActiveWorkspaceId(id);
   };
+
+  const handleAddNewWorkspace = useCallback(() => {
+    addNewWorkspace({
+      title: 'Test',
+      iconName: 'lamp',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!areWorkspacesLoaded) {
+      loadAllWorkspaces();
+    }
+  }, [areWorkspacesLoaded]);
 
   return (
     <div className={styles.container}>
       <div className={styles.tabs}>
-        <InlineFolder isSection title="Account" isFoldersSection isSidebarTab orderedIds={[]}>
+        <InlineFolder isSection title="Account" isSidebarTab orderedIds={[]}>
           <MainSidebarTabProfile />
         </InlineFolder>
-        <InlineFolder isSection title="Spaces" isFoldersSection isSidebarTab orderedIds={[]}>
-          <MainSidebarTab
-            iconName="lamp"
-            title="Personal"
-            // eslint-disable-next-line react/jsx-no-bind
-            onClick={handleOpenWorkspace}
-            isSelected={leftColumnContentKey === LeftColumnContent.Workspace}
-          />
-          <MainSidebarTab title="Dev" iconName="keyboard" />
+        <InlineFolder
+          title="Spaces"
+          isSection
+          isSidebarTab
+          onAddClick={handleAddNewWorkspace}
+          orderedIds={[]}
+        >
+          {workspaces.map((w) => (
+            <MainSidebarTab
+              iconName={w.iconName}
+              title={w.title}
+              // eslint-disable-next-line react/jsx-no-bind
+              onClick={() => setActiveWorkspace(w.id)}
+              isSelected={w.id === activeWorkspaceId && leftColumnContentKey === LeftColumnContent.Workspace}
+            />
+          ))}
         </InlineFolder>
-        <InlineFolder isSection title="Chats" isFoldersSection isSidebarTab orderedIds={[]}>
+        <InlineFolder isSection title="Chats" isSidebarTab orderedIds={[]}>
           <MainSidebarTab
             title="Unreads"
             iconName="check"
@@ -59,7 +91,7 @@ const MainSidebar: FC<StateProps> = ({
           <MainSidebarTab title="Bots" iconName="bots" />
           <MainSidebarTab title="Archive" iconName="archive" />
         </InlineFolder>
-        <InlineFolder isSection title="Saved" isFoldersSection isSidebarTab orderedIds={[]}>
+        <InlineFolder isSection title="Saved" isSidebarTab orderedIds={[]}>
           <MainSidebarTab title="All" iconName="tag" />
         </InlineFolder>
       </div>
@@ -69,9 +101,15 @@ const MainSidebar: FC<StateProps> = ({
 
 export default memo(withGlobal(
   (global): StateProps => {
+    const { workspaces } = global;
+
     const tabState = selectTabState(global);
     const leftColumnContentKey = tabState.leftColumn.contentKey;
+
     return {
+      workspaces: workspaces.byOrder,
+      areWorkspacesLoaded: workspaces.areLoaded,
+      activeWorkspaceId: workspaces.activeId,
       leftColumnContentKey,
     };
   },

@@ -2,12 +2,14 @@ import type { FC } from '../../../lib/teact/teact';
 import {
   memo, useEffect, useRef, useState,
 } from '../../../lib/teact/teact';
-import { getActions } from '../../../global';
+import { getActions, withGlobal } from '../../../global';
 
+import type { ApiWorkspace } from '../../../api/notlost/types';
 import type { FolderEditDispatch } from '../../../hooks/reducers/useFoldersReducer';
 import { LeftColumnContent } from '../../../types';
 
 import { PRODUCTION_URL } from '../../../config';
+import { selectActiveWorkspace } from '../../../global/selectors/workspace';
 import { IS_ELECTRON, IS_TOUCH_ENV } from '../../../util/browser/windowEnvironment';
 import buildClassName from '../../../util/buildClassName';
 
@@ -27,6 +29,10 @@ import Workspace from './Workspace';
 
 // import LeftMainHeader from './LeftMainHeader';
 import './LeftMain.scss';
+
+type StateProps = {
+  activeWorkspace?: ApiWorkspace;
+};
 
 type OwnProps = {
   content: LeftColumnContent;
@@ -50,7 +56,7 @@ const BUTTON_CLOSE_DELAY_MS = 250;
 
 let closeTimeout: number | undefined;
 
-const LeftMain: FC<OwnProps> = ({
+const LeftMain: FC<OwnProps & StateProps> = ({
   content,
   searchQuery,
   searchDate,
@@ -65,6 +71,7 @@ const LeftMain: FC<OwnProps> = ({
   onReset,
   onTopicSearch,
   isAccountFrozen,
+  activeWorkspace,
 }) => {
   const { /* closeForumPanel */ openLeftColumnContent } = getActions();
   const [isNewChatButtonShown, setIsNewChatButtonShown] = useState(IS_TOUCH_ENV);
@@ -192,7 +199,10 @@ const LeftMain: FC<OwnProps> = ({
         {(isActive) => {
           switch (content) {
             case LeftColumnContent.Workspace:
-              return <Workspace />;
+              if (activeWorkspace) {
+                return <Workspace workspace={activeWorkspace} />;
+              }
+              return undefined;
             case LeftColumnContent.ChatList:
               return (
                 <ChatFolders
@@ -247,4 +257,10 @@ const LeftMain: FC<OwnProps> = ({
   );
 };
 
-export default memo(LeftMain);
+export default memo(withGlobal(
+  (global): StateProps => {
+    return {
+      activeWorkspace: selectActiveWorkspace(global),
+    };
+  },
+)(LeftMain));
