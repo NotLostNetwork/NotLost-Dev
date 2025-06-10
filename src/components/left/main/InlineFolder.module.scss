@@ -36,6 +36,20 @@
     background-color: rgba(var(--color-chat-hover), 0.75);
   }
 
+  &.selected {
+    background-color: var(--color-telegram-blue);
+
+    :global(.icon) {
+      color: white;
+
+      &:hover {
+        background-color: white;
+        color: var(--color-telegram-blue)
+      }
+    }
+
+  }
+
   :global(.icon) {
     padding: 0.125rem;
     border-radius: var(--border-radius-default-tiny);
@@ -56,6 +70,9 @@
   color: var(--color-text-secondary);
   font-size: 0.875rem;
 
+  &.selected {
+    color: white;
+  }
   &.section {
     font-size: 0.750rem;
   }

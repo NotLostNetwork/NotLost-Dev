@@ -14,6 +14,7 @@ type OwnProps = {
   children?: React.ReactNode;
   isSection?: boolean;
   isSidebarTab?: boolean;
+  isSelected?: boolean;
   title: string;
   isMocked?: boolean;
   className?: string;
@@ -26,6 +27,7 @@ const InlineFolder: FC<OwnProps> = ({
   children,
   isSection,
   isSidebarTab,
+  isSelected,
   title,
   isMocked,
   onAddClick,
@@ -72,12 +74,14 @@ const InlineFolder: FC<OwnProps> = ({
 
   const headerClassname = buildClassName(
     styles.header,
+    isSelected && styles.selected,
     isSection && styles.section,
     isSidebarTab && styles.sidebarTab,
 
   );
   const titleClassName = buildClassName(
     styles.title,
+    isSelected && styles.selected,
     isSection && styles.section,
     isSidebarTab && styles.sidebarTab,
   );

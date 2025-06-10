@@ -34,12 +34,12 @@ const MainSidebar: FC<StateProps> = ({
     openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
   };
 
-  const setActiveWorkspace = (id: string) => {
+  const setActiveWorkspace = useCallback((id: string) => {
     if (leftColumnContentKey !== LeftColumnContent.Workspace) {
       openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
     }
     setActiveWorkspaceId(id);
-  };
+  }, [leftColumnContentKey]);
 
   const handleAddNewWorkspace = useCallback(() => {
     addNewWorkspace({
@@ -51,8 +51,10 @@ const MainSidebar: FC<StateProps> = ({
   useEffect(() => {
     if (!areWorkspacesLoaded) {
       loadAllWorkspaces();
+    } else if (activeWorkspaceId === undefined) {
+      setActiveWorkspace(workspaces[0].id);
     }
-  }, [areWorkspacesLoaded]);
+  }, [activeWorkspaceId, areWorkspacesLoaded, setActiveWorkspace, workspaces]);
 
   return (
     <div className={styles.container}>

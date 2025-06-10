@@ -7,6 +7,10 @@
   grid-template-rows: 1fr 1fr;
   align-items: center;
 
+  position: relative;
+  padding-left: 0.5rem;
+  padding-right: 0.25rem;
+
   min-height: 2.5rem;
   padding: 0.25rem;
   border-radius: var(--border-radius-default);
@@ -64,7 +68,7 @@
 }
 
 .title {
-  grid-column: 3;
+  font-size: 0.875rem;
   grid-row: 1 / 3;
 }
 
@@ -80,12 +84,12 @@
 
 .title, .subtitle {
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
-}
+  text-overflow: clip !important;
 
-.withAvatar, .multiline {
-  height: 3.5rem; // Force chat item height
+  h3 {
+  text-overflow: clip !important;
+  }
 }
 
 .multiline {

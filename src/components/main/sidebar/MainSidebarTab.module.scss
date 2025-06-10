@@ -12,7 +12,8 @@
   }
 
   &.selected {
-    background-color: var(--color-background-secondary);
+    transition: all 0.15s ease;
+    background: var(--color-background);
     color: var(--color-text-default);
   }
 
