@@ -189,7 +189,7 @@ const LeftMain: FC<OwnProps & StateProps> = ({
         isClosingSearch={isClosingSearch}
       /> */}
       <Transition
-        name={shouldSkipTransition ? 'none' : 'zoomFade'}
+        name={shouldSkipTransition ? 'none' : 'none'}
         renderCount={TRANSITION_RENDER_COUNT}
         activeKey={content}
         shouldCleanup
@@ -222,6 +222,46 @@ const LeftMain: FC<OwnProps & StateProps> = ({
                     <SearchInput onChange={() => {}} />
                   </div>
                   <ChatList isActive folderType="saved" />
+                </div>
+              );
+            case LeftColumnContent.AllUnread:
+              return (
+                <div style="height: 100%">
+                  <div style="padding: 0.5rem;">
+                    {/* eslint-disable-next-line react/jsx-no-bind */ }
+                    <SearchInput onChange={() => {}} />
+                  </div>
+                  <ChatList isActive folderType="all" category="unread" />
+                </div>
+              );
+            case LeftColumnContent.Groups:
+              return (
+                <div style="height: 100%">
+                  <div style="padding: 0.5rem;">
+                    {/* eslint-disable-next-line react/jsx-no-bind */ }
+                    <SearchInput onChange={() => {}} />
+                  </div>
+                  <ChatList isActive folderType="all" category="groups" />
+                </div>
+              );
+            case LeftColumnContent.Channels:
+              return (
+                <div style="height: 100%">
+                  <div style="padding: 0.5rem;">
+                    {/* eslint-disable-next-line react/jsx-no-bind */ }
+                    <SearchInput onChange={() => {}} />
+                  </div>
+                  <ChatList isActive folderType="all" category="channels" />
+                </div>
+              );
+            case LeftColumnContent.Bots:
+              return (
+                <div style="height: 100%">
+                  <div style="padding: 0.5rem;">
+                    {/* eslint-disable-next-line react/jsx-no-bind */ }
+                    <SearchInput onChange={() => {}} />
+                  </div>
+                  <ChatList isActive folderType="all" category="bots" />
                 </div>
               );
             case LeftColumnContent.GlobalSearch:

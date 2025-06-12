@@ -30,9 +30,9 @@ const MainSidebar: FC<StateProps> = ({
     loadAllWorkspaces, addNewWorkspace, openLeftColumnContent, setActiveWorkspaceId,
   } = getActions();
 
-  const handleOpenInbox = () => {
+  const handleOpenAllChats = useCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
-  };
+  }, []);
 
   const handleOpenArchive = useCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.Archived });
@@ -40,6 +40,22 @@ const MainSidebar: FC<StateProps> = ({
 
   const handleOpenSaved = useCallback(() => {
     openLeftColumnContent({ contentKey: LeftColumnContent.Saved });
+  }, []);
+
+  const handleOpenAllUnread = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.AllUnread });
+  }, []);
+
+  const handleOpenBots = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Bots });
+  }, []);
+
+  const handleOpenGroups = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Groups });
+  }, []);
+
+  const handleOpenChannels = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Channels });
   }, []);
 
   const setActiveWorkspace = useCallback((id: string) => {
@@ -91,14 +107,33 @@ const MainSidebar: FC<StateProps> = ({
           <MainSidebarTab
             title="Unreads"
             iconName="check"
-            // eslint-disable-next-line react/jsx-no-bind
-            onClick={handleOpenInbox}
+            onClick={handleOpenAllUnread}
+            isSelected={leftColumnContentKey === LeftColumnContent.AllUnread}
+          />
+          <MainSidebarTab
+            title="All"
+            iconName="message-read"
+            onClick={handleOpenAllChats}
             isSelected={leftColumnContentKey === LeftColumnContent.ChatList}
           />
-          <MainSidebarTab title="All" iconName="message-read" />
-          <MainSidebarTab title="Groups" iconName="group" />
-          <MainSidebarTab title="Channels" iconName="channel" />
-          <MainSidebarTab title="Bots" iconName="bots" />
+          <MainSidebarTab
+            title="Groups"
+            iconName="group"
+            onClick={handleOpenGroups}
+            isSelected={leftColumnContentKey === LeftColumnContent.Groups}
+          />
+          <MainSidebarTab
+            title="Channels"
+            iconName="channel"
+            onClick={handleOpenChannels}
+            isSelected={leftColumnContentKey === LeftColumnContent.Channels}
+          />
+          <MainSidebarTab
+            title="Bots"
+            iconName="bots"
+            onClick={handleOpenBots}
+            isSelected={leftColumnContentKey === LeftColumnContent.Bots}
+          />
           <MainSidebarTab
             title="Archive"
             iconName="archive"

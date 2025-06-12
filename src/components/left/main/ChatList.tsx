@@ -21,7 +21,9 @@ import {
 } from '../../../config';
 import { IS_APP, IS_MAC_OS } from '../../../util/browser/windowEnvironment';
 import buildClassName from '../../../util/buildClassName';
-import { getOrderKey, getPinnedChatsCount } from '../../../util/folderManager';
+import {
+  getAllBotsIds, getAllChannelsIds, getAllGroupsIds, getOrderKey, getPinnedChatsCount, getUnreadChatsByFolderId,
+} from '../../../util/folderManager';
 import { getServerTime } from '../../../util/serverTime';
 
 import usePeerStoriesPolling from '../../../hooks/polling/usePeerStoriesPolling';
@@ -46,6 +48,7 @@ type OwnProps = {
   className?: string;
   folderType: 'all' | 'archived' | 'saved' | 'folder';
   folderId?: number;
+  category?: 'unread' | 'groups' | 'channels' | 'bots';
   isActive: boolean;
   canDisplayArchive?: boolean;
   archiveSettings?: GlobalState['archiveSettings'];
@@ -64,6 +67,7 @@ const ChatList: FC<OwnProps> = ({
   className,
   folderType,
   folderId,
+  category,
   isActive,
   isForumPanelOpen,
   /* canDisplayArchive, */
@@ -95,7 +99,28 @@ const ChatList: FC<OwnProps> = ({
   const shouldDisplayArchive = false; /* isAllFolder && canDisplayArchive && archiveSettings; */
   const shouldShowFrozenAccountNotification = isAccountFrozen && isAllFolder;
 
-  const orderedIds = useFolderManagerForOrderedIds(resolvedFolderId);
+  const folderOrderedIds = useFolderManagerForOrderedIds(resolvedFolderId);
+
+  const allUnreadIds = getUnreadChatsByFolderId()[ALL_FOLDER_ID];
+  const allBotIds = getAllBotsIds();
+  const allGroupsIds = getAllGroupsIds();
+  const allChannelsIds = getAllChannelsIds();
+
+  const orderedIds = useMemo(() => {
+    switch (category) {
+      case 'unread':
+        return allUnreadIds;
+      case 'bots':
+        return allBotIds;
+      case 'groups':
+        return allGroupsIds;
+      case 'channels':
+        return allChannelsIds;
+      default:
+        return folderOrderedIds;
+    }
+  }, [category, allUnreadIds, allBotIds, allGroupsIds, allChannelsIds, folderOrderedIds]);
+
   usePeerStoriesPolling(orderedIds);
 
   const chatsHeight = (orderedIds?.length || 0) * CHAT_HEIGHT_PX;
