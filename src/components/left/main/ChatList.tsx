@@ -238,6 +238,7 @@ const ChatList: FC<OwnProps> = ({
           offsetTop={offsetTop}
           observeIntersection={observe}
           onDragEnter={handleDragEnter}
+          withSubtitle
         />
       );
     });

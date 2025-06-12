@@ -85,6 +85,7 @@ type OwnProps = {
   isSavedDialog?: boolean;
   isPreview?: boolean;
   isStatic?: boolean;
+  withSubtitle?: boolean;
   avatarSize?: AvatarSize;
   previewMessageId?: number;
   className?: string;
@@ -150,6 +151,7 @@ const Chat: FC<OwnProps & StateProps> = ({
   currentUserId,
   isPreview,
   isStatic,
+  withSubtitle,
   avatarSize,
   previewMessageId,
   className,
@@ -354,6 +356,7 @@ const Chat: FC<OwnProps & StateProps> = ({
     isUserId(chatId) ? 'private' : 'group',
     isSelected && 'selected',
     isSelectedForum && 'selected-forum',
+    !withSubtitle && 'aligned',
     Boolean(isPreview || isStatic) && 'standalone',
     className,
   );
@@ -363,7 +366,7 @@ const Chat: FC<OwnProps & StateProps> = ({
       ref={ref}
       className={chatClassName}
       href={href}
-      style={`top: ${offsetTop}px`}
+      style={`top: ${offsetTop}px;`}
       ripple={!isForum && !isMobile}
       contextActions={contextActions}
       onClick={handleClick}
@@ -410,7 +413,7 @@ const Chat: FC<OwnProps & StateProps> = ({
       </div>
       <div className="info">
         <div className="info-row">
-          {isHovered
+          {isHovered && !withSubtitle
             ? renderSubtitle()
             : (
               <FullNameTitle
@@ -421,9 +424,6 @@ const Chat: FC<OwnProps & StateProps> = ({
                 observeIntersection={observeIntersection}
               />
             )}
-
-          {isUnread
-            && <div className={`unread-indicator ${isMuted && 'muted'}`} />}
           {/* <div className="separator" />
           {lastMessage && (
             <LastMessageMeta
@@ -433,8 +433,10 @@ const Chat: FC<OwnProps & StateProps> = ({
             />
           )} */}
         </div>
-        {/* <div className="subtitle">
-          {!isPreview && (
+        {withSubtitle && (
+          <div className="subtitle">
+            {renderSubtitle()}
+            {/* {!isPreview && (
             <ChatBadge
               chat={chat}
               isPinned={isPinned}
@@ -444,9 +446,12 @@ const Chat: FC<OwnProps & StateProps> = ({
               topics={topics}
               isSelected={isSelected}
             />
-          )}
-        </div> */}
+          )} */}
+          </div>
+        )}
       </div>
+      <div className={`shadow-container ${isUnread && 'unread'} ${isMuted && 'muted'} ${!withSubtitle && 'aligned'}`} />
+
       {shouldRenderDeleteModal && (
         <DeleteChatModal
           isOpen={isDeleteModalOpen}

@@ -69,9 +69,6 @@
     box-shadow: none !important;
     outline: none !important;
     display: flex;
-    align-items: center;
-
-    min-height: 3rem;
     padding: 0 1rem;
     position: relative;
     overflow: hidden;
@@ -269,7 +266,7 @@
     .typing-status {
       overflow: hidden;
       white-space: nowrap;
-      text-overflow: ellipsis;
+      text-overflow: clip;
       text-align: initial;
     }
 
@@ -281,6 +278,7 @@
 
     .title {
       h3 {
+        font-size: 0.875rem;
         font-weight: var(--font-weight-medium);
       }
     }
@@ -361,7 +359,8 @@
     .typing-status {
       body.is-ios &,
       body.is-macos & {
-        font-size: 0.9375rem;
+        line-height: 0.875rem;
+        font-size: 0.875rem;
       }
     }
 

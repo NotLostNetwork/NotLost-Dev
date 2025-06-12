@@ -40,6 +40,12 @@
     transition: transform 0.2s ease-out;
   }
 
+  &.aligned {
+    .ListItem-button {
+      align-items: center !important;
+    }
+  }
+
   &:hover,
   &.ListItem.has-menu-open {
     .avatar-badge {
@@ -52,6 +58,22 @@
 
     .ChatCallStatus {
       border-color: var(--color-chat-hover);
+    }
+
+    .shadow-container {
+      box-shadow: 0 10px 20px 20px var(--color-chat-hover);
+    }
+  }
+
+  &:hover:not(.selected) {
+  .shadow-container {
+    box-shadow: 0 10px 20px 20px var(--color-chat-hover);
+  }
+}
+
+  &.selected {
+    .shadow-container {
+      box-shadow: 0 10px 20px 20px var(--color-chat-active);
     }
   }
 
@@ -553,28 +575,7 @@
       }
     }
 
-    .unread-indicator {
-      margin-left: auto;
-      padding-left: 1rem;
-      padding-right: 0.25rem;
-      position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-        height: 0.5rem;
-        width: 0.5rem;
-        border-radius: 50%;
-        background-color: var(--color-error);
-      }
-
-      &.muted::after {
-        background-color: var(--color-text-secondary);
-      }
-    }
+    
 
     .last-message,
     .typing-status {
@@ -671,7 +672,35 @@
       margin-inline: 0;
     }
   }
+  .shadow-container {
+    margin-left: auto;
+    padding-right: 0.25rem;
+    position: relative;
+    box-shadow: 0 10px 20px 20px var(--color-background);
 
+    &.unread {
+      padding-left: 1.5rem;
+    }
+    &.unread::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 50%;
+      background-color: var(--color-error);
+    }
+
+    &.aligned, &.unread::after {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &.muted::after {
+      background-color: var(--color-text-secondary);
+    }
+    }
   &[dir="rtl"] {
     .info {
       .LastMessageMeta {
