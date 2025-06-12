@@ -38,6 +38,10 @@ const MainSidebar: FC<StateProps> = ({
     openLeftColumnContent({ contentKey: LeftColumnContent.Archived });
   }, []);
 
+  const handleOpenSaved = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Saved });
+  }, []);
+
   const setActiveWorkspace = useCallback((id: string) => {
     if (leftColumnContentKey !== LeftColumnContent.Workspace) {
       openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
@@ -103,7 +107,12 @@ const MainSidebar: FC<StateProps> = ({
           />
         </InlineFolder>
         <InlineFolder isSection title="Saved" isSidebarTab orderedIds={[]}>
-          <MainSidebarTab title="All" iconName="tag" />
+          <MainSidebarTab
+            title="All"
+            iconName="tag"
+            onClick={handleOpenSaved}
+            isSelected={leftColumnContentKey === LeftColumnContent.Saved}
+          />
         </InlineFolder>
       </div>
     </div>
