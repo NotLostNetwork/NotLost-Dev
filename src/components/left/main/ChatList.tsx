@@ -66,7 +66,7 @@ const ChatList: FC<OwnProps> = ({
   folderId,
   isActive,
   isForumPanelOpen,
-  canDisplayArchive,
+  /* canDisplayArchive, */
   archiveSettings,
   sessions,
   isAccountFrozen,
@@ -92,7 +92,7 @@ const ChatList: FC<OwnProps> = ({
     isAllFolder ? ALL_FOLDER_ID : isArchived ? ARCHIVED_FOLDER_ID : isSaved ? SAVED_FOLDER_ID : folderId!
   );
 
-  const shouldDisplayArchive = isAllFolder && canDisplayArchive && archiveSettings;
+  const shouldDisplayArchive = false; /* isAllFolder && canDisplayArchive && archiveSettings; */
   const shouldShowFrozenAccountNotification = isAccountFrozen && isAllFolder;
 
   const orderedIds = useFolderManagerForOrderedIds(resolvedFolderId);
@@ -273,7 +273,7 @@ const ChatList: FC<OwnProps> = ({
       {shouldDisplayArchive && (
         <Archive
           key="archive"
-          archiveSettings={archiveSettings}
+          archiveSettings={archiveSettings!} // archiveSettings
           onClick={handleArchivedClick}
           onDragEnter={handleArchivedDragEnter}
         />

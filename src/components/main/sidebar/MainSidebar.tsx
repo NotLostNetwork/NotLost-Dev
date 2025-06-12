@@ -34,6 +34,10 @@ const MainSidebar: FC<StateProps> = ({
     openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
   };
 
+  const handleOpenArchive = useCallback(() => {
+    openLeftColumnContent({ contentKey: LeftColumnContent.Archived });
+  }, []);
+
   const setActiveWorkspace = useCallback((id: string) => {
     if (leftColumnContentKey !== LeftColumnContent.Workspace) {
       openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
@@ -91,7 +95,12 @@ const MainSidebar: FC<StateProps> = ({
           <MainSidebarTab title="Groups" iconName="group" />
           <MainSidebarTab title="Channels" iconName="channel" />
           <MainSidebarTab title="Bots" iconName="bots" />
-          <MainSidebarTab title="Archive" iconName="archive" />
+          <MainSidebarTab
+            title="Archive"
+            iconName="archive"
+            onClick={handleOpenArchive}
+            isSelected={leftColumnContentKey === LeftColumnContent.Archived}
+          />
         </InlineFolder>
         <InlineFolder isSection title="Saved" isSidebarTab orderedIds={[]}>
           <MainSidebarTab title="All" iconName="tag" />

@@ -19,10 +19,11 @@ import useOldLang from '../../../hooks/useOldLang';
 import useShowTransitionDeprecated from '../../../hooks/useShowTransitionDeprecated';
 
 import Button from '../../ui/Button';
+import SearchInput from '../../ui/SearchInput';
 import Transition from '../../ui/Transition';
 import NewChatButton from '../NewChatButton';
 import LeftSearch from '../search/LeftSearch.async';
-import ChatFolders from './ChatFolders';
+import ChatList from './ChatList';
 import ContactList from './ContactList.async';
 import ForumPanel from './ForumPanel';
 import Workspace from './Workspace';
@@ -63,7 +64,7 @@ const LeftMain: FC<OwnProps & StateProps> = ({
   /* isClosingSearch, */
   contactsFilter,
   shouldSkipTransition,
-  foldersDispatch,
+  /* foldersDispatch, */
   isAppUpdateAvailable,
   isElectronUpdateAvailable,
   isForumPanelOpen,
@@ -83,10 +84,10 @@ const LeftMain: FC<OwnProps & StateProps> = ({
 
   const {
     shouldRenderForumPanel, handleForumPanelAnimationEnd,
-    handleForumPanelAnimationStart, isAnimationStarted,
+    handleForumPanelAnimationStart, /* isAnimationStarted */
   } = useForumPanelRender(isForumPanelOpen);
   const isForumPanelRendered = isForumPanelOpen && content === LeftColumnContent.ChatList;
-  const isForumPanelVisible = isForumPanelRendered && isAnimationStarted;
+  // const isForumPanelVisible = isForumPanelRendered && isAnimationStarted;
 
   const {
     shouldRender: shouldRenderUpdateButton,
@@ -205,11 +206,13 @@ const LeftMain: FC<OwnProps & StateProps> = ({
               return undefined;
             case LeftColumnContent.ChatList:
               return (
-                <ChatFolders
-                  shouldHideFolderTabs={isForumPanelVisible}
-                  foldersDispatch={foldersDispatch}
-                  isForumPanelOpen={isForumPanelVisible}
-                />
+                <div>
+                  <div style="padding: 0.5rem;">
+                    {/* eslint-disable-next-line react/jsx-no-bind */ }
+                    <SearchInput onChange={() => {}} />
+                  </div>
+                  <ChatList isActive folderType="all" />
+                </div>
               );
             case LeftColumnContent.GlobalSearch:
               return (
