@@ -24,47 +24,6 @@
   }
 }
 
-.SearchContainer {
-  position: relative;
-  z-index: 10;
-
-  .searchIcon {
-    position: absolute;
-    z-index: 10;
-    top: 50%;
-    left: 0.5rem;
-    transform: translateY(-50%);
-    color: var(--color-text-secondary)
-  }
-}
-
-.Search {
-  margin-bottom: 0 !important;
-  
-  input {
-    background-color: var(--color-button);
-    height: 1.875rem;
-    border: 1px solid transparent;
-    border-radius: 0.5rem;
-    padding-left: 2rem;
-    font-size: 14px;
-  }
-
-  input::placeholder {
-    color: var(--color-text-secondary) !important;
-  }
-
-  :global(.form-control:focus) {
-    border-color: var(--color-links);
-    box-shadow: none;
-    caret-color: var(--color-links);
-  }
-  :global(.form-control:hover) {
-    border-color: var(--color-links);
-    box-shadow: none;
-  }
-}
-
 .Backdrop {
   flex: 1;
   height: 100%; 

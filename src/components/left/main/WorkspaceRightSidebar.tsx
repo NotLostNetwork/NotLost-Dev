@@ -12,10 +12,9 @@ import { unique } from '../../../util/iteratees';
 
 import { useFolderManagerForOrderedIds } from '../../../hooks/useFolderManager';
 
-import Icon from '../../common/icons/Icon';
 import PeerPicker from '../../common/pickers/PeerPicker';
-import InputText from '../../ui/InputText';
 import Portal from '../../ui/Portal';
+import SearchInput from '../../ui/SearchInput';
 import Transition from '../../ui/Transition';
 
 import styles from './WorkspaceRightSidebar.module.scss';
@@ -40,6 +39,7 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
   }, [folderAllOrderedIds]);
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -67,14 +67,12 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
         <div className={containerClassName}>
           {isOpen && (
             <div className={styles.sidebar}>
-              <div className={styles.searchContainer}>
-                <Icon name="search" className={styles.searchIcon} />
-                <InputText className={styles.search} placeholder="Search" />
-              </div>
+              <SearchInput onChange={setSearchValue} />
 
               <PeerPicker
                 itemIds={displayedIds}
                 selectedIds={[]}
+                filterValue={searchValue}
                 categoryPlaceholderKey="FilterChatTypes"
                 searchInputId="new-group-picker-search"
                 withDefaultPadding
