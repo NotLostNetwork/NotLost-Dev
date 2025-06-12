@@ -38,8 +38,3 @@
   display: flex;
   align-items: center;
 }
-
-.textShadow {
-  -webkit-mask-image: linear-gradient(to right, black 90%, transparent);
-  mask-image: linear-gradient(to right, black 90%, transparent);
-}
