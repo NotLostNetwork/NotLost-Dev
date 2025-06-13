@@ -34,7 +34,7 @@ type OwnProps = {
 };
 
 const InlineFolder: FC<OwnProps> = ({
-  /* orderedIds */
+  orderedIds,
   children,
   isSection,
   isSidebarTab,
@@ -150,6 +150,16 @@ const InlineFolder: FC<OwnProps> = ({
     return (
       <div className={innerClassName}>
         {isMocked && mockChats()}
+        {orderedIds && orderedIds.map((id) => (
+          <Chat
+            chatId={id}
+            orderDiff={0}
+            animationType={ChatAnimationTypes.None}
+            isStatic
+            className={styles.chat}
+            avatarSize="tiny"
+          />
+        ))}
         {children}
       </div>
     );

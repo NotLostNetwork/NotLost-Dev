@@ -2693,6 +2693,15 @@ export interface ActionPayloads {
     folderId: string;
     newTitle: string;
   };
+  updateWorkspaceFolderChats: {
+    workspaceId: string;
+    folderId: string;
+    chatIds: string[];
+  };
+  updateWorkspacePinnedChats: {
+    workspaceId: string;
+    chatIds: string[];
+  };
 }
 
 export interface RequiredActionPayloads {

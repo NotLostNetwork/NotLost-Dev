@@ -93,6 +93,45 @@ class ApiWorkspaceLayer {
       }),
     );
   };
+
+  updateWorkspaceFolderChats = async (workspaceId: string, folderId: string, chatIds: string[]): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            folders: w.folders.map((f) => {
+              if (f.id === folderId) {
+                return {
+                  ...f,
+                  chatIds,
+                };
+              }
+
+              return f;
+            }),
+          };
+        }
+        return w;
+      }),
+    );
+  };
+
+  updateWorkspacePinnedChats = async (workspaceId: string, chatIds: string[]): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            pinnedChatIds: chatIds,
+          };
+        }
+        return w;
+      }),
+    );
+  };
 }
 
 export default new ApiWorkspaceLayer();

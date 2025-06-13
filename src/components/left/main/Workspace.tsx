@@ -76,15 +76,14 @@ const Workspace: FC<OwnProps> = ({
 
   return (
     <div className={containerClassName}>
-      <InlineFolder isSection title="Pinned" orderedIds={[]} isMocked />
-      <InlineFolder isSection title="Folders" orderedIds={[]} onAddClick={handleStartAddingNewFolder}>
+      <InlineFolder isSection title="Pinned" orderedIds={workspace.pinnedChatIds} />
+      <InlineFolder isSection title="Folders" onAddClick={handleStartAddingNewFolder}>
         {workspace.folders.map((f) => {
           return (
             <InlineFolder
               title={f.title}
-              orderedIds={[]}
+              orderedIds={f.chatIds}
               isSelected={f.id === activeFolder?.id}
-              isMocked
               isEditing={editingFolderId === f.id}
               onAddClick={handleOpenSidebar(f)}
               // eslint-disable-next-line react/jsx-no-bind
@@ -116,7 +115,12 @@ const Workspace: FC<OwnProps> = ({
             />
           )}
       </InlineFolder>
-      <WorkspaceRightSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} activeFolder={activeFolder} />
+      <WorkspaceRightSidebar
+        isOpen={isSidebarOpen}
+        onClose={handleCloseSidebar}
+        activeFolder={activeFolder}
+        workspaceId={workspace.id}
+      />
     </div>
   );
 };

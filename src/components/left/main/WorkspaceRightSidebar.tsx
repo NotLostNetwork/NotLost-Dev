@@ -1,7 +1,8 @@
 import type { FC } from '../../../lib/teact/teact';
 import React, {
-  memo, useEffect, useMemo, useState,
+  memo, useCallback, useEffect, useMemo, useState,
 } from '../../../lib/teact/teact';
+import { getActions } from '../../../global';
 
 import type { ApiInlineFolder } from '../../../api/notlost/types';
 
@@ -23,37 +24,61 @@ type OwnProps = {
   isOpen: boolean;
   onClose: NoneToVoidFunction;
   activeFolder?: ApiInlineFolder;
+  workspaceId: string;
 };
 
 const WorkspaceRightSidebar: FC<OwnProps> = ({
   isOpen,
   onClose,
+  activeFolder,
+  workspaceId,
 }) => {
+  const { updateWorkspaceFolderChats } = getActions();
   const folderAllOrderedIds = useFolderManagerForOrderedIds(ALL_FOLDER_ID);
 
   const displayedIds = useMemo(() => {
-    const chatIds = [...folderAllOrderedIds || []];
-    return unique([
-      ...filterPeersByQuery({ ids: chatIds, query: undefined, type: 'chat' }),
-    ]);
+    const chatIds = folderAllOrderedIds || [];
+    return unique(
+      filterPeersByQuery({ ids: chatIds, query: undefined, type: 'chat' }),
+    );
   }, [folderAllOrderedIds]);
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>(activeFolder?.chatIds || []);
 
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
     } else {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setIsAnimating(false);
       }, 300);
+      return () => clearTimeout(timeout);
     }
   }, [isOpen]);
 
-  const containerClassName = buildClassName(
-    styles.container,
-  );
+  useEffect(() => {
+    setSelectedIds(activeFolder?.chatIds || []);
+  }, [activeFolder]);
+
+  const handleAddChatToWorkspaceFolder = useCallback((ids: string[]) => {
+    if (!activeFolder) return;
+
+    updateWorkspaceFolderChats({
+      workspaceId,
+      folderId: activeFolder.id,
+      chatIds: ids,
+    });
+  }, [updateWorkspaceFolderChats, workspaceId, activeFolder]);
+
+  useEffect(() => {
+    if (!activeFolder) return;
+    handleAddChatToWorkspaceFolder(selectedIds);
+  }, [selectedIds, handleAddChatToWorkspaceFolder, activeFolder]);
+
+  const containerClassName = buildClassName(styles.container);
 
   return (
     <Portal containerSelector="#middle-column-left-sidebar-portals" className={styles.portal}>
@@ -61,9 +86,8 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
         name="slideFade"
         direction="inverse"
         activeKey={isOpen ? 1 : 0}
-        className={isAnimating && styles.transitionContainer}
+        className={isAnimating ? styles.transitionContainer : undefined}
       >
-
         <div className={containerClassName}>
           {isOpen && (
             <div className={styles.sidebar}>
@@ -71,7 +95,7 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
 
               <PeerPicker
                 itemIds={displayedIds}
-                selectedIds={[]}
+                selectedIds={selectedIds}
                 filterValue={searchValue}
                 categoryPlaceholderKey="FilterChatTypes"
                 searchInputId="new-group-picker-search"
@@ -80,14 +104,12 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
                 allowMultiple
                 itemInputType="checkbox"
                 className={styles.picker}
+                onSelectedIdsChange={setSelectedIds}
               />
-
             </div>
           )}
-
           <div className={styles.backdrop} onClick={onClose} />
         </div>
-
       </Transition>
     </Portal>
   );

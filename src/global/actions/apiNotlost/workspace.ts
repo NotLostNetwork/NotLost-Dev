@@ -175,3 +175,58 @@ addActionHandler('renameWorkspaceFolder', (global, actions, payload): ActionRetu
 
   setGlobal(global);
 });
+
+addActionHandler('updateWorkspaceFolderChats', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, folderId, chatIds } = payload;
+
+  ApiWorkspaceLayer.updateWorkspaceFolderChats(workspaceId, folderId, chatIds);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            folders: w.folders.map((f) => {
+              if (f.id === folderId) {
+                return { ...f, chatIds };
+              }
+              return f;
+            }),
+          };
+        }
+
+        return w;
+      }),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('updateWorkspacePinnedChats', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, chatIds } = payload;
+
+  ApiWorkspaceLayer.updateWorkspacePinnedChats(workspaceId, chatIds);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            pinnedChatIds: chatIds,
+          };
+        }
+
+        return w;
+      }),
+    },
+  };
+
+  setGlobal(global);
+});

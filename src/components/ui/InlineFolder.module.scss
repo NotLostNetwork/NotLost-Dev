@@ -63,10 +63,9 @@
   .title {
     color: var(--color-text-secondary);
     font-size: 0.875rem;
-  }  
-}
+  }
 
-:global(.icon) {
+  :global(.icon) {
     padding: 0.125rem;
     border-radius: var(--border-radius-default-tiny);
     transition: all 0.15s ease;
@@ -75,6 +74,14 @@
     &:hover {
       background-color: var(--color-borders);
     }
+
+    &.rotate {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+  :global(.icon) {
 
     &.rotate {
       transform: rotate(-90deg);
