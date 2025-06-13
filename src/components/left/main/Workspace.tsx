@@ -4,6 +4,8 @@ import { getActions } from '../../../global';
 
 import type { ApiInlineFolder, ApiWorkspace } from '../../../api/notlost/types';
 
+import buildClassName from '../../../util/buildClassName';
+
 import InlineFolder from '../../ui/InlineFolder';
 import WorkspaceRightSidebar from './WorkspaceRightSidebar';
 
@@ -16,9 +18,10 @@ type OwnProps = {
 const Workspace: FC<OwnProps> = ({
   workspace,
 }) => {
-  const { addNewFolderIntoWorkspace } = getActions();
+  const { addNewFolderIntoWorkspace, deleteFolderFromWorkspace, renameWorkspaceFolder } = getActions();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeFolder, setActiveFolder] = useState<ApiInlineFolder | undefined>(undefined);
+  const [editingFolderId, setEditingFolderId] = useState<string | undefined>(undefined);
 
   const [isAddingNewFolder, setIsAddingNewFolder] = useState(false);
 
@@ -50,8 +53,29 @@ const Workspace: FC<OwnProps> = ({
     handleCancelAddingNewFolder();
   }, [handleCancelAddingNewFolder, workspace.id]);
 
+  const handleRenameWorkspaceFolder = useCallback((folderId: string, newTitle: string) => {
+    renameWorkspaceFolder({
+      workspaceId: workspace.id,
+      folderId,
+      newTitle,
+    });
+    setEditingFolderId(undefined);
+  }, [workspace.id]);
+
+  const handleDeleteFolder = useCallback((folderId: string) => {
+    deleteFolderFromWorkspace({
+      workspaceId: workspace.id,
+      folderId,
+    });
+  }, [workspace.id]);
+
+  const containerClassName = buildClassName(
+    styles.container,
+    'custom-scroll',
+  );
+
   return (
-    <div className={styles.container}>
+    <div className={containerClassName}>
       <InlineFolder isSection title="Pinned" orderedIds={[]} isMocked />
       <InlineFolder isSection title="Folders" orderedIds={[]} onAddClick={handleStartAddingNewFolder}>
         {workspace.folders.map((f) => {
@@ -61,7 +85,25 @@ const Workspace: FC<OwnProps> = ({
               orderedIds={[]}
               isSelected={f.id === activeFolder?.id}
               isMocked
+              isEditing={editingFolderId === f.id}
               onAddClick={handleOpenSidebar(f)}
+              // eslint-disable-next-line react/jsx-no-bind
+              onEditFinish={(newTitle) => handleRenameWorkspaceFolder(f.id, newTitle)}
+              contextActions={[
+                {
+                  title: 'Rename',
+                  icon: 'edit',
+                  handler: () => setEditingFolderId(f.id),
+                  key: '1',
+                },
+                {
+                  title: 'Delete',
+                  icon: 'delete',
+                  destructive: true,
+                  handler: () => handleDeleteFolder(f.id),
+                  key: 'delete',
+                },
+              ]}
             />
           );
         })}

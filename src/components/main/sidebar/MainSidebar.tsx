@@ -8,6 +8,7 @@ import type { ApiWorkspace } from '../../../api/notlost/types';
 import { LeftColumnContent } from '../../../types';
 
 import { selectTabState } from '../../../global/selectors';
+import buildClassName from '../../../util/buildClassName';
 
 import InlineFolder from '../../ui/InlineFolder';
 import MainSidebarTab from './MainSidebarTab';
@@ -29,7 +30,7 @@ const MainSidebar: FC<StateProps> = ({
   activeWorkspaceId,
 }) => {
   const {
-    loadAllWorkspaces, addNewWorkspace, openLeftColumnContent, setActiveWorkspaceId,
+    loadAllWorkspaces, addNewWorkspace, openLeftColumnContent, setActiveWorkspaceId, deleteWorkspace,
   } = getActions();
   const [isAddingNewSpace, setIsAddingNewSpace] = useState(false);
 
@@ -59,6 +60,10 @@ const MainSidebar: FC<StateProps> = ({
     handleCancelAddingNewSpace();
   }, [handleCancelAddingNewSpace]);
 
+  const handleDeleteWorkspace = useCallback((workspaceId: string) => {
+    deleteWorkspace({ workspaceId });
+  }, []);
+
   useEffect(() => {
     if (!areWorkspacesLoaded) {
       loadAllWorkspaces();
@@ -67,8 +72,13 @@ const MainSidebar: FC<StateProps> = ({
     }
   }, [activeWorkspaceId, areWorkspacesLoaded, handleSetActiveWorkspace, workspaces]);
 
+  const containerClassName = buildClassName(
+    styles.container,
+    'custom-scroll',
+  );
+
   return (
-    <div className={styles.container}>
+    <div className={containerClassName}>
       <div className={styles.tabs}>
         <InlineFolder isSection title="Account" isSidebarTab>
           <MainSidebarTabProfile />
@@ -85,6 +95,14 @@ const MainSidebar: FC<StateProps> = ({
               title={w.title}
               onClick={handleSetActiveWorkspace(w.id)}
               isSelected={leftColumnContentKey === LeftColumnContent.Workspace && activeWorkspaceId === w.id}
+              contextActions={[
+                {
+                  title: 'Delete',
+                  handler: () => handleDeleteWorkspace(w.id),
+                  icon: 'delete',
+                  destructive: true,
+                },
+              ]}
             />
           ))}
           {isAddingNewSpace

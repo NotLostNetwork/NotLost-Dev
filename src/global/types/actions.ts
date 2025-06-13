@@ -2677,6 +2677,22 @@ export interface ActionPayloads {
     workspaceId: string;
     title: string;
   };
+  deleteFolderFromWorkspace: {
+    workspaceId: string;
+    folderId: string;
+  };
+  deleteWorkspace: {
+    workspaceId: string;
+  };
+  renameWorkspace: {
+    workspaceId: string;
+    newTitle: string;
+  };
+  renameWorkspaceFolder: {
+    workspaceId: string;
+    folderId: string;
+    newTitle: string;
+  };
 }
 
 export interface RequiredActionPayloads {

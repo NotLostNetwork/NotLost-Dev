@@ -32,6 +32,67 @@ class ApiWorkspaceLayer {
       }),
     );
   };
+
+  deleteWorkspace = async (workspaceId: string): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.filter((w) => w.id !== workspaceId),
+    );
+  };
+
+  deleteWorkspaceFolder = async (workspaceId: string, folderId: string): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((workspace) => {
+        if (workspace.id === workspaceId) {
+          return {
+            ...workspace,
+            folders: (workspace.folders ?? []).filter((folder) => folder.id !== folderId),
+          };
+        }
+        return workspace;
+      }),
+    );
+  };
+
+  renameWorkspaceFolder = async (workspaceId: string, folderId: string, newTitle: string): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            folders: w.folders.map((f) => {
+              if (f.id === folderId) {
+                return {
+                  ...f,
+                  title: newTitle,
+                };
+              }
+
+              return f;
+            }),
+          };
+        }
+        return w;
+      }),
+    );
+  };
+
+  renameWorkspace = async (workspaceId: string, newTitle: string): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            title: newTitle,
+          };
+        }
+        return w;
+      }),
+    );
+  };
 }
 
 export default new ApiWorkspaceLayer();

@@ -2,10 +2,6 @@
   width: 100%;
 }
 
-.Container :global(.ListItem-button) {
-  padding-left: 0.5rem !important;
-}
-
 .Header {
   height: 1.875rem;
   width: 100%;
@@ -32,8 +28,7 @@
   }
 
   &:active {
-    transition: none;
-    background-color: rgba(var(--color-chat-hover), 0.75);
+    background-color: rgba(40,40,40, 0.8);
   }
 
   &.selected {
@@ -99,6 +94,7 @@
 
 .Inner {
   margin-top: 1px;
+  padding-bottom: 0.5rem;
 
   > * + * {
     margin-top: 1px;
@@ -137,4 +133,13 @@
       border-color: var(--color-links)
     }
   }
+}
+
+:global(.ListItem-button) {
+  padding: 0 !important;
+  min-height: unset !important;
+}
+
+:global(.Chat .ListItem-button) {
+  padding: 0.25rem 0.5rem !important;
 }
