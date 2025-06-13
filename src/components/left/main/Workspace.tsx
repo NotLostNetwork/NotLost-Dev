@@ -4,7 +4,7 @@ import { getActions } from '../../../global';
 
 import type { ApiInlineFolder, ApiWorkspace } from '../../../api/notlost/types';
 
-import InlineFolder from './InlineFolder';
+import InlineFolder from '../../ui/InlineFolder';
 import WorkspaceRightSidebar from './WorkspaceRightSidebar';
 
 import styles from './Workspace.module.scss';
@@ -20,12 +20,7 @@ const Workspace: FC<OwnProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeFolder, setActiveFolder] = useState<ApiInlineFolder | undefined>(undefined);
 
-  const handleAddNewFolder = useCallback(() => {
-    addNewFolderIntoWorkspace({
-      workspaceId: workspace.id,
-      title: 'Test',
-    });
-  }, [workspace.id]);
+  const [isAddingNewFolder, setIsAddingNewFolder] = useState(false);
 
   const handleCloseSidebar = useCallback(() => {
     setIsSidebarOpen(false);
@@ -39,10 +34,26 @@ const Workspace: FC<OwnProps> = ({
     };
   }, []);
 
+  const handleStartAddingNewFolder = useCallback(() => {
+    setIsAddingNewFolder(true);
+  }, []);
+
+  const handleCancelAddingNewFolder = useCallback(() => {
+    setIsAddingNewFolder(false);
+  }, []);
+
+  const handleAddNewFolder = useCallback((title: string) => {
+    addNewFolderIntoWorkspace({
+      workspaceId: workspace.id,
+      title,
+    });
+    handleCancelAddingNewFolder();
+  }, [handleCancelAddingNewFolder, workspace.id]);
+
   return (
     <div className={styles.container}>
       <InlineFolder isSection title="Pinned" orderedIds={[]} isMocked />
-      <InlineFolder isSection title="Folders" orderedIds={[]} onAddClick={handleAddNewFolder}>
+      <InlineFolder isSection title="Folders" orderedIds={[]} onAddClick={handleStartAddingNewFolder}>
         {workspace.folders.map((f) => {
           return (
             <InlineFolder
@@ -54,6 +65,14 @@ const Workspace: FC<OwnProps> = ({
             />
           );
         })}
+        {isAddingNewFolder
+          && (
+            <InlineFolder
+              isEditing
+              onEditCancel={handleCancelAddingNewFolder}
+              onEditFinish={handleAddNewFolder}
+            />
+          )}
       </InlineFolder>
       <WorkspaceRightSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} activeFolder={activeFolder} />
     </div>

@@ -1,5 +1,7 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, { memo, useCallback, useEffect } from '../../../lib/teact/teact';
+import React, {
+  memo, useCallback, useEffect, useState,
+} from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
 
 import type { ApiWorkspace } from '../../../api/notlost/types';
@@ -7,7 +9,7 @@ import { LeftColumnContent } from '../../../types';
 
 import { selectTabState } from '../../../global/selectors';
 
-import InlineFolder from '../../left/main/InlineFolder';
+import InlineFolder from '../../ui/InlineFolder';
 import MainSidebarTab from './MainSidebarTab';
 import MainSidebarTabProfile from './MainSidebarTabProfile';
 
@@ -29,124 +31,110 @@ const MainSidebar: FC<StateProps> = ({
   const {
     loadAllWorkspaces, addNewWorkspace, openLeftColumnContent, setActiveWorkspaceId,
   } = getActions();
+  const [isAddingNewSpace, setIsAddingNewSpace] = useState(false);
 
-  const handleOpenAllChats = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.ChatList });
+  const handleStartAddingNewSpace = useCallback(() => {
+    setIsAddingNewSpace(true);
   }, []);
 
-  const handleOpenArchive = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Archived });
+  const handleCancelAddingNewSpace = useCallback(() => {
+    setIsAddingNewSpace(false);
   }, []);
 
-  const handleOpenSaved = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Saved });
-  }, []);
+  const handleSetActiveWorkspace = useCallback(
+    (id: string) => () => {
+      if (leftColumnContentKey !== LeftColumnContent.Workspace) {
+        openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
+      }
+      setActiveWorkspaceId(id);
+    },
+    [leftColumnContentKey],
+  );
 
-  const handleOpenAllUnread = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.AllUnread });
-  }, []);
-
-  const handleOpenBots = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Bots });
-  }, []);
-
-  const handleOpenGroups = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Groups });
-  }, []);
-
-  const handleOpenChannels = useCallback(() => {
-    openLeftColumnContent({ contentKey: LeftColumnContent.Channels });
-  }, []);
-
-  const setActiveWorkspace = useCallback((id: string) => {
-    if (leftColumnContentKey !== LeftColumnContent.Workspace) {
-      openLeftColumnContent({ contentKey: LeftColumnContent.Workspace });
-    }
-    setActiveWorkspaceId(id);
-  }, [leftColumnContentKey]);
-
-  const handleAddNewWorkspace = useCallback(() => {
+  const handleAddNewWorkspace = useCallback((title: string) => {
     addNewWorkspace({
-      title: 'Test',
+      title,
       iconName: 'lamp',
     });
-  }, []);
+    handleCancelAddingNewSpace();
+  }, [handleCancelAddingNewSpace]);
 
   useEffect(() => {
     if (!areWorkspacesLoaded) {
       loadAllWorkspaces();
     } else if (activeWorkspaceId === undefined) {
-      setActiveWorkspace(workspaces[0].id);
+      handleSetActiveWorkspace(workspaces[0].id)();
     }
-  }, [activeWorkspaceId, areWorkspacesLoaded, setActiveWorkspace, workspaces]);
+  }, [activeWorkspaceId, areWorkspacesLoaded, handleSetActiveWorkspace, workspaces]);
 
   return (
     <div className={styles.container}>
       <div className={styles.tabs}>
-        <InlineFolder isSection title="Account" isSidebarTab orderedIds={[]}>
+        <InlineFolder isSection title="Account" isSidebarTab>
           <MainSidebarTabProfile />
         </InlineFolder>
         <InlineFolder
           title="Spaces"
           isSection
           isSidebarTab
-          onAddClick={handleAddNewWorkspace}
-          orderedIds={[]}
+          onAddClick={handleStartAddingNewSpace}
         >
           {workspaces.map((w) => (
             <MainSidebarTab
               iconName={w.iconName}
               title={w.title}
-              // eslint-disable-next-line react/jsx-no-bind
-              onClick={() => setActiveWorkspace(w.id)}
-              isSelected={w.id === activeWorkspaceId && leftColumnContentKey === LeftColumnContent.Workspace}
+              onClick={handleSetActiveWorkspace(w.id)}
+              isSelected={leftColumnContentKey === LeftColumnContent.Workspace && activeWorkspaceId === w.id}
             />
           ))}
+          {isAddingNewSpace
+          && (
+            <InlineFolder
+              isEditing
+              isSidebarTab
+              onEditCancel={handleCancelAddingNewSpace}
+              onEditFinish={handleAddNewWorkspace}
+            />
+          )}
+
         </InlineFolder>
         <InlineFolder isSection title="Chats" isSidebarTab orderedIds={[]}>
           <MainSidebarTab
             title="Unreads"
             iconName="check"
-            onClick={handleOpenAllUnread}
-            isSelected={leftColumnContentKey === LeftColumnContent.AllUnread}
+            leftColumnContent={LeftColumnContent.AllUnread}
           />
           <MainSidebarTab
             title="All"
             iconName="message-read"
-            onClick={handleOpenAllChats}
-            isSelected={leftColumnContentKey === LeftColumnContent.ChatList}
+            leftColumnContent={LeftColumnContent.ChatList}
           />
           <MainSidebarTab
             title="Groups"
             iconName="group"
-            onClick={handleOpenGroups}
-            isSelected={leftColumnContentKey === LeftColumnContent.Groups}
+            leftColumnContent={LeftColumnContent.Groups}
           />
           <MainSidebarTab
             title="Channels"
             iconName="channel"
-            onClick={handleOpenChannels}
-            isSelected={leftColumnContentKey === LeftColumnContent.Channels}
+            leftColumnContent={LeftColumnContent.Channels}
           />
           <MainSidebarTab
             title="Bots"
             iconName="bots"
-            onClick={handleOpenBots}
-            isSelected={leftColumnContentKey === LeftColumnContent.Bots}
+            leftColumnContent={LeftColumnContent.Bots}
           />
           <MainSidebarTab
             title="Archive"
             iconName="archive"
-            onClick={handleOpenArchive}
-            isSelected={leftColumnContentKey === LeftColumnContent.Archived}
+            leftColumnContent={LeftColumnContent.Archived}
           />
         </InlineFolder>
         <InlineFolder isSection title="Saved" isSidebarTab orderedIds={[]}>
           <MainSidebarTab
             title="All"
             iconName="tag"
-            onClick={handleOpenSaved}
-            isSelected={leftColumnContentKey === LeftColumnContent.Saved}
+            leftColumnContent={LeftColumnContent.Saved}
           />
         </InlineFolder>
       </div>

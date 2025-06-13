@@ -48,9 +48,30 @@
       }
     }
 
+    .title {
+      color: white;
+    }
   }
 
-  :global(.icon) {
+  &.section {
+    .title {
+      font-size: 0.750rem;
+    }
+  }
+
+  &.sidebarTab {
+    .title {
+      color: #6B6B6B;
+    }
+  }
+
+  .title {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }  
+}
+
+:global(.icon) {
     padding: 0.125rem;
     border-radius: var(--border-radius-default-tiny);
     transition: all 0.15s ease;
@@ -64,23 +85,6 @@
       transform: rotate(-90deg);
     }
   }
-}
-
-.Title {
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-
-  &.selected {
-    color: white;
-  }
-  &.section {
-    font-size: 0.750rem;
-  }
-
-  &.sidebarTab {
-    color: #6B6B6B;
-  }
-}
 
 .Actions {
   display: flex;
@@ -105,3 +109,32 @@
   }
 }
 
+.EditingContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+
+  .editingLeftIcon {
+    color: var(--color-links);
+  }
+
+  input {
+    outline: none;
+    border: none;
+    padding-left: 0.5rem;
+    background: var(--color-button);
+    border-radius: var(--border-radius-default-tiny);
+    width: 100%;
+    border: 1px solid transparent;
+    caret-color: var(--color-links);
+
+    font-size: 0.875rem;
+
+    
+
+    &:focus {
+      border-color: var(--color-links)
+    }
+  }
+}
