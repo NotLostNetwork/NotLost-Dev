@@ -1,5 +1,5 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, { memo, useCallback, useState } from '../../../lib/teact/teact';
+import { memo, useCallback, useState } from '../../../lib/teact/teact';
 import { getActions } from '../../../global';
 
 import type { ApiInlineFolder, ApiWorkspace } from '../../../api/notlost/types';
@@ -86,7 +86,6 @@ const Workspace: FC<OwnProps> = ({
               isSelected={f.id === activeFolder?.id}
               isEditing={editingFolderId === f.id}
               onAddClick={handleOpenSidebar(f)}
-              // eslint-disable-next-line react/jsx-no-bind
               onEditFinish={(newTitle) => handleRenameWorkspaceFolder(f.id, newTitle)}
               contextActions={[
                 {

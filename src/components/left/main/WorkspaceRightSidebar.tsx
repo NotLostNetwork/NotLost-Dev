@@ -1,5 +1,5 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, {
+import {
   memo, useCallback, useEffect, useMemo, useState,
 } from '../../../lib/teact/teact';
 import { getActions } from '../../../global';
@@ -47,14 +47,15 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>(activeFolder?.chatIds || []);
 
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
+      return undefined;
     } else {
       const timeout = setTimeout(() => {
         setIsAnimating(false);
       }, 300);
+
       return () => clearTimeout(timeout);
     }
   }, [isOpen]);

@@ -3,32 +3,35 @@
 }
 
 .Header {
-  height: 1.875rem;
-  width: 100%;
+  cursor: pointer;
+
   display: flex;
   gap: 0.5rem;
   align-items: center;
+
+  width: 100%;
+  height: 1.875rem;
   padding: 0 0.5rem;
-  font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius-default-tiny);
 
-  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+
   transition: all 0.15s ease;
 
   &:hover {
     background-color: var(--color-chat-hover);
 
     &.sidebarTab {
-      background-color: var(--color-background-secondary);
       color: #6B6B6B;
+      background-color: var(--color-background-secondary);
     }
     i {
-      opacity: 1
+      opacity: 1;
     }
   }
 
   &:active {
-    background-color: rgba(40,40,40, 0.8);
+    background-color: rgba(40, 40, 40, 0.8);
   }
 
   &.selected {
@@ -38,8 +41,8 @@
       color: white;
 
       &:hover {
+        color: var(--color-telegram-blue);
         background-color: white;
-        color: var(--color-telegram-blue)
       }
     }
 
@@ -50,7 +53,7 @@
 
   &.section {
     .title {
-      font-size: 0.750rem;
+      font-size: 0.75rem;
     }
   }
 
@@ -61,15 +64,15 @@
   }
 
   .title {
-    color: var(--color-text-secondary);
     font-size: 0.875rem;
+    color: var(--color-text-secondary);
   }
 
   :global(.icon) {
     padding: 0.125rem;
     border-radius: var(--border-radius-default-tiny);
-    transition: all 0.15s ease;
     color: var(--color-text-secondary);
+    transition: all 0.15s ease;
 
     &:hover {
       background-color: var(--color-borders);
@@ -81,12 +84,12 @@
   }
 }
 
-  :global(.icon) {
+:global(.icon) {
 
-    &.rotate {
-      transform: rotate(-90deg);
-    }
+  &.rotate {
+    transform: rotate(-90deg);
   }
+}
 
 .Actions {
   display: flex;
@@ -114,8 +117,8 @@
 
 .EditingContainer {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  align-items: center;
   padding-left: 0.5rem;
 
   .editingLeftIcon {
@@ -123,28 +126,29 @@
   }
 
   input {
-    outline: none;
-    border: none;
-    padding-left: 0.5rem;
-    background: var(--color-button);
-    border-radius: var(--border-radius-default-tiny);
     width: 100%;
+    padding-left: 0.5rem;
+    border: none;
     border: 1px solid transparent;
-    caret-color: var(--color-links);
+    border-radius: var(--border-radius-default-tiny);
 
     font-size: 0.875rem;
 
-    
+    background: var(--color-button);
+    outline: none;
+    caret-color: var(--color-links);
+
+
 
     &:focus {
-      border-color: var(--color-links)
+      border-color: var(--color-links);
     }
   }
 }
 
 :global(.ListItem-button) {
-  padding: 0 !important;
   min-height: unset !important;
+  padding: 0 !important;
 }
 
 :global(.Chat .ListItem-button) {

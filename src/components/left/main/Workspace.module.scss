@@ -7,10 +7,12 @@
     margin-top: 1rem;
   }
 }
+
 .Sidebar {
-  z-index: 999;
   position: absolute;
+  z-index: 999;
   top: 1rem;
   right: -2rem;
+
   background-color: aqua;
 }

@@ -1,5 +1,5 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, { memo, useMemo } from '../../../lib/teact/teact';
+import { memo, useMemo } from '../../../lib/teact/teact';
 import { withGlobal } from '../../../global';
 
 import type { ApiPeer } from '../../../api/types';
@@ -52,11 +52,11 @@ const MainSidebarTabProfile: FC<StateProps> = ({
         /* onSelectArchived={onSelectArchived}
             onSelectContacts={onSelectContacts}
             onSelectSettings={onSelectSettings} */
-        // eslint-disable-next-line react/jsx-no-bind
+
         onSelectArchived={() => {}}
-        // eslint-disable-next-line react/jsx-no-bind
+
         onSelectContacts={() => {}}
-        // eslint-disable-next-line react/jsx-no-bind
+
         onSelectSettings={() => {}}
         onBotMenuOpened={markBotMenuOpen}
         onBotMenuClosed={unmarkBotMenuOpen}

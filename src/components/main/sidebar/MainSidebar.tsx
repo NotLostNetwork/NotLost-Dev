@@ -1,5 +1,5 @@
 import type { FC } from '../../../lib/teact/teact';
-import React, {
+import {
   memo, useCallback, useEffect, useState,
 } from '../../../lib/teact/teact';
 import { getActions, withGlobal } from '../../../global';
@@ -106,14 +106,14 @@ const MainSidebar: FC<StateProps> = ({
             />
           ))}
           {isAddingNewSpace
-          && (
-            <InlineFolder
-              isEditing
-              isSidebarTab
-              onEditCancel={handleCancelAddingNewSpace}
-              onEditFinish={handleAddNewWorkspace}
-            />
-          )}
+            && (
+              <InlineFolder
+                isEditing
+                isSidebarTab
+                onEditCancel={handleCancelAddingNewSpace}
+                onEditFinish={handleAddNewWorkspace}
+              />
+            )}
 
         </InlineFolder>
         <InlineFolder isSection title="Chats" isSidebarTab orderedIds={[]}>

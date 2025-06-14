@@ -1,5 +1,5 @@
 import type { FC } from '../../lib/teact/teact';
-import React, {
+import {
   memo, useCallback, useEffect, useRef, useState,
 } from '../../lib/teact/teact';
 
@@ -48,10 +48,9 @@ const InlineFolder: FC<OwnProps> = ({
   onEditFinish,
   onEditCancel,
 }) => {
-  // eslint-disable-next-line no-null/no-null
-  const listItemRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line no-null/no-null
-  const editingTitleRef = useRef<HTMLInputElement>(null);
+  const listItemRef = useRef<HTMLDivElement | undefined>(undefined);
+  const editingTitleRef = useRef<HTMLInputElement | undefined>(undefined);
+
   const [onEditTitleValue, setOnEditTitleValue] = useState(title || '');
 
   const [isExpanded, setIsExpanded] = useState(isSection);
@@ -171,7 +170,6 @@ const InlineFolder: FC<OwnProps> = ({
       withPortalForMenu
       className={styles.listItem}
       contextActions={contextActions}
-      // eslint-disable-next-line react/jsx-no-bind
       onClick={() => {}}
     >
       <div className={styles.container} ref={listItemRef}>
