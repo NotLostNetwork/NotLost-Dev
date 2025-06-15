@@ -26,7 +26,7 @@ import LeftSearch from '../search/LeftSearch.async';
 import ChatList from './ChatList';
 import ContactList from './ContactList.async';
 import ForumPanel from './ForumPanel';
-import Workspace from './Workspace';
+import Workspace from './workspace/Workspace';
 
 // import LeftMainHeader from './LeftMainHeader';
 import './LeftMain.scss';

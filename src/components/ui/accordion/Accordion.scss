@@ -1,32 +1,27 @@
-.Container {
+.Accordion {
   width: 100%;
 }
 
-.Header {
-  cursor: pointer;
-
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-
+.AccordionHeader {
   width: 100%;
   height: 1.875rem;
   padding: 0 0.5rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  cursor: pointer;
+
   border-radius: var(--border-radius-default-tiny);
-
   font-weight: var(--font-weight-medium);
-
   transition: all 0.15s ease;
 
   &:hover {
     background-color: var(--color-chat-hover);
 
-    &.sidebarTab {
-      color: #6B6B6B;
-      background-color: var(--color-background-secondary);
-    }
     i {
-      opacity: 1;
+      opacity: 1 !important;
     }
   }
 
@@ -34,10 +29,10 @@
     background-color: rgba(40, 40, 40, 0.8);
   }
 
-  &.selected {
+  &.highlighted {
     background-color: var(--color-telegram-blue);
 
-    :global(.icon) {
+    i {
       color: white;
 
       &:hover {
@@ -51,24 +46,12 @@
     }
   }
 
-  &.section {
-    .title {
-      font-size: 0.75rem;
-    }
-  }
-
-  &.sidebarTab {
-    .title {
-      color: #6B6B6B;
-    }
-  }
-
   .title {
     font-size: 0.875rem;
     color: var(--color-text-secondary);
   }
 
-  :global(.icon) {
+  i {
     padding: 0.125rem;
     border-radius: var(--border-radius-default-tiny);
     color: var(--color-text-secondary);
@@ -82,46 +65,51 @@
       transform: rotate(-90deg);
     }
   }
-}
 
-:global(.icon) {
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: auto;
 
-  &.rotate {
-    transform: rotate(-90deg);
+    i {
+      opacity: 0;
+    }
+  }
+
+  :global(.ListItem-button) {
+    min-height: unset !important;
+    padding: 0 !important;
+  }
+
+  :global(.Chat .ListItem-button) {
+    padding: 0.25rem 0.5rem !important;
   }
 }
 
-.Actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-left: auto;
 
-  :global(.icon) {
-    opacity: 0;
-  }
-}
 
-.Inner {
-  margin-top: 1px;
-  padding-bottom: 0.5rem;
-
-  > * + * {
+.AccordionInner {
+  &.expanded {
     margin-top: 1px;
+    padding-bottom: 0.5rem;
+
+    > * + * {
+      margin-top: 1px;
+    }
   }
 
-  &.insetInner {
+  &.withPadding {
     padding-left: 0.5rem;
   }
 }
 
-.EditingContainer {
+.AccordionHeaderOnRename {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
-  padding-left: 0.5rem;
+  gap: 0.5rem;
 
-  .editingLeftIcon {
+  .leftIcon {
     color: var(--color-links);
   }
 
@@ -130,7 +118,6 @@
     padding-left: 0.5rem;
     border: none;
     border: 1px solid transparent;
-    border-radius: var(--border-radius-default-tiny);
 
     font-size: 0.875rem;
 
@@ -138,25 +125,12 @@
     outline: none;
     caret-color: var(--color-links);
 
-
-
-    &:focus {
-      border-color: var(--color-links);
+    &::placeholder {
+      font-size: 0.875rem;
     }
   }
 }
 
-.NoChatsPlaceholder {
-  font-size: 0.875rem;
-  text-align: center;
-  color: var(--color-text-secondary);
-}
-
-:global(.ListItem-button) {
-  min-height: unset !important;
-  padding: 0 !important;
-}
-
-:global(.Chat .ListItem-button) {
-  padding: 0.25rem 0.5rem !important;
+.rotateDownIcon {
+  transform: rotate(-90deg);
 }

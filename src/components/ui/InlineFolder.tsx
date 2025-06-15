@@ -174,7 +174,7 @@ const InlineFolder: FC<OwnProps> = ({
     >
       <div className={styles.container} ref={listItemRef}>
         <div className={headerClassname} onClick={handleToggleExpanded}>
-          {!isSection && <Icon name="down" className={!isExpanded && styles.rotate} />}
+          {(!isSection || (isSection && !isExpanded)) && <Icon name="down" className={!isExpanded && styles.rotate} />}
           <div className={styles.title}>{title}</div>
           <div className={styles.actions}>
             <Icon

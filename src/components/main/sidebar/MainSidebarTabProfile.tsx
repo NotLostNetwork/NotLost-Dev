@@ -32,7 +32,7 @@ const MainSidebarTabProfile: FC<StateProps> = ({
     return ({ onTrigger }) => (
       <div className={selectorClassName} onClick={onTrigger}>
         <Avatar className={styles.profileAvatar} peer={peer} size="mini" forceRoundedRect />
-        <div style="color: var(--color-text)">
+        <div style="color: var(--color-text); font-size: 13px;">
           {peer?.usernames && peer.usernames[0] && peer.usernames[0].username}
         </div>
       </div>

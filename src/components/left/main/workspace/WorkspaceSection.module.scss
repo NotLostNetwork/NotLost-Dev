@@ -1,0 +1,11 @@
+.Accordion {
+
+  :global(.title) {
+    font-size: 12px;
+  }
+
+  :global(.icon-down) {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+}

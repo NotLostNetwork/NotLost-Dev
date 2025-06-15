@@ -1,39 +1,39 @@
-import type { FC } from '../../../lib/teact/teact';
+import type { FC } from '../../../../lib/teact/teact';
 import {
   memo, useCallback, useEffect, useMemo, useState,
-} from '../../../lib/teact/teact';
-import { getActions } from '../../../global';
+} from '../../../../lib/teact/teact';
+import { getActions } from '../../../../global';
 
-import type { ApiInlineFolder } from '../../../api/notlost/types';
+import type { ApiInlineFolder, ApiSection } from '../../../../api/notlost/types';
+import type { ActiveEntityType } from './Workspace';
 
-import { ALL_FOLDER_ID } from '../../../config';
-import { filterPeersByQuery } from '../../../global/helpers/peers';
-import buildClassName from '../../../util/buildClassName';
-import { unique } from '../../../util/iteratees';
+import { ALL_FOLDER_ID } from '../../../../config';
+import { filterPeersByQuery } from '../../../../global/helpers/peers';
+import buildClassName from '../../../../util/buildClassName';
+import { unique } from '../../../../util/iteratees';
 
-import { useFolderManagerForOrderedIds } from '../../../hooks/useFolderManager';
+import { useFolderManagerForOrderedIds } from '../../../../hooks/useFolderManager';
 
-import PeerPicker from '../../common/pickers/PeerPicker';
-import Portal from '../../ui/Portal';
-import SearchInput from '../../ui/SearchInput';
-import Transition from '../../ui/Transition';
+import Icon from '../../../common/icons/Icon';
+import PeerPicker from '../../../common/pickers/PeerPicker';
+import Portal from '../../../ui/Portal';
+import SearchInput from '../../../ui/SearchInput';
+import Transition from '../../../ui/Transition';
 
 import styles from './WorkspaceRightSidebar.module.scss';
 
 type OwnProps = {
-  isOpen: boolean;
-  onClose: NoneToVoidFunction;
-  activeFolder?: ApiInlineFolder;
-  workspaceId: string;
+  activeEntity?: ApiSection | ApiInlineFolder;
+  activeEntityType?: ActiveEntityType;
+  onClose?: NoneToVoidFunction;
 };
 
 const WorkspaceRightSidebar: FC<OwnProps> = ({
-  isOpen,
+  activeEntity,
+  activeEntityType,
   onClose,
-  activeFolder,
-  workspaceId,
 }) => {
-  const { updateWorkspaceFolderChats } = getActions();
+  const { updateSectionChats } = getActions();
   const folderAllOrderedIds = useFolderManagerForOrderedIds(ALL_FOLDER_ID);
 
   const displayedIds = useMemo(() => {
@@ -45,10 +45,10 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [selectedIds, setSelectedIds] = useState<string[]>(activeFolder?.chatIds || []);
+  const [selectedIds, setSelectedIds] = useState<string[]>(activeEntity?.chatIds || []);
 
   useEffect(() => {
-    if (isOpen) {
+    if (activeEntity) {
       setIsAnimating(true);
       return undefined;
     } else {
@@ -58,26 +58,34 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
 
       return () => clearTimeout(timeout);
     }
-  }, [isOpen]);
+  }, [activeEntity]);
 
   useEffect(() => {
-    setSelectedIds(activeFolder?.chatIds || []);
-  }, [activeFolder]);
+    setSelectedIds(activeEntity?.chatIds || []);
+  }, [activeEntity]);
 
-  const handleAddChatToWorkspaceFolder = useCallback((ids: string[]) => {
-    if (!activeFolder) return;
+  const handleAddChat = useCallback((ids: string[]) => {
+    if (!activeEntity || !activeEntityType) return;
 
-    updateWorkspaceFolderChats({
-      workspaceId,
-      folderId: activeFolder.id,
-      chatIds: ids,
-    });
-  }, [updateWorkspaceFolderChats, workspaceId, activeFolder]);
+    switch (activeEntityType) {
+      case 'section': {
+        updateSectionChats({
+          sectionId: activeEntity.id,
+          chatIds: ids,
+        });
+        break;
+      }
+
+      default:
+        break;
+    }
+  }, [activeEntity, activeEntityType]);
 
   useEffect(() => {
-    if (!activeFolder) return;
-    handleAddChatToWorkspaceFolder(selectedIds);
-  }, [selectedIds, handleAddChatToWorkspaceFolder, activeFolder]);
+    if (!activeEntity) return;
+
+    handleAddChat(selectedIds);
+  }, [activeEntity, handleAddChat, selectedIds]);
 
   const containerClassName = buildClassName(styles.container);
 
@@ -86,12 +94,16 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
       <Transition
         name="slideFade"
         direction="inverse"
-        activeKey={isOpen ? 1 : 0}
+        activeKey={activeEntity ? 1 : 0}
         className={isAnimating ? styles.transitionContainer : undefined}
       >
         <div className={containerClassName}>
-          {isOpen && (
+          {activeEntity && (
             <div className={styles.sidebar}>
+              <div className={styles.header}>
+                <div>Add chats</div>
+                <Icon name="close" className={styles.closeButton} onClick={onClose} />
+              </div>
               <SearchInput onChange={setSearchValue} />
 
               <PeerPicker
