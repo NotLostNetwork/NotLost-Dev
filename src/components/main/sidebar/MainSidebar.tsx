@@ -67,7 +67,7 @@ const MainSidebar: FC<StateProps> = ({
   useEffect(() => {
     if (!areWorkspacesLoaded) {
       loadAllWorkspaces();
-    } else if (activeWorkspaceId === undefined) {
+    } else if (activeWorkspaceId === undefined && workspaces[0]) {
       handleSetActiveWorkspace(workspaces[0].id)();
     }
   }, [activeWorkspaceId, areWorkspacesLoaded, handleSetActiveWorkspace, workspaces]);
