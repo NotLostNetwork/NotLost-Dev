@@ -2668,18 +2668,11 @@ export interface ActionPayloads {
 
   // Workspace
   loadAllWorkspaces: undefined;
+  setActiveWorkspaceId: string;
+
   addNewWorkspace: {
     title: string;
     iconName: IconName;
-  };
-  setActiveWorkspaceId: string;
-  addNewFolderIntoWorkspace: {
-    workspaceId: string;
-    title: string;
-  };
-  deleteFolderFromWorkspace: {
-    workspaceId: string;
-    folderId: string;
   };
   deleteWorkspace: {
     workspaceId: string;
@@ -2688,18 +2681,38 @@ export interface ActionPayloads {
     workspaceId: string;
     newTitle: string;
   };
-  renameWorkspaceFolder: {
+
+  // Section
+  addNewSectionIntoWorkspace: {
     workspaceId: string;
+    title: string;
+  };
+  deleteSectionFromWorkspace: {
+    sectionId: string;
+  };
+  renameWorkspaceSection: {
+    sectionId: string;
+    newTitle: string;
+  };
+  updateSectionChats: {
+    sectionId: string;
+    chatIds: string[];
+  };
+
+  // Folder
+  addNewFolderIntoSection: {
+    sectionId: string;
+    title: string;
+  };
+  deleteFolderFromSection: {
+    folderId: string;
+  };
+  renameSectionFolder: {
     folderId: string;
     newTitle: string;
   };
-  updateWorkspaceFolderChats: {
-    workspaceId: string;
+  updateFolderChats: {
     folderId: string;
-    chatIds: string[];
-  };
-  updateWorkspacePinnedChats: {
-    workspaceId: string;
     chatIds: string[];
   };
 }

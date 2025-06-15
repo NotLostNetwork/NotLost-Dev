@@ -16,6 +16,12 @@ export type ApiWorkspace = {
   id: string;
   title: string;
   iconName: IconName;
-  pinnedChatIds: string[];
+  sections: ApiSection[];
+};
+
+export type ApiSection = {
+  id: string;
+  title: string;
+  chatIds: string[];
   folders: ApiInlineFolder[];
 };
