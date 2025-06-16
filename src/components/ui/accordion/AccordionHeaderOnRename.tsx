@@ -12,14 +12,14 @@ import Icon from '../../common/icons/Icon';
 import './Accordion.scss';
 
 type OwnProps = {
-  iconName?: IconName;
+  leftIconName?: IconName;
   title?: string;
   onRenameCancel?: NoneToVoidFunction;
   onRenameFinish?: (value: string) => void;
 };
 
 const AccordionHeaderOnRename: FC<OwnProps> = ({
-  iconName,
+  leftIconName,
   title,
   onRenameCancel,
   onRenameFinish,
@@ -37,12 +37,12 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
 
   const leftIconClassName = buildClassName(
     'leftIcon',
-    iconName === 'down' && 'rotate',
+    leftIconName === 'down' && 'rotate',
   );
 
   return (
     <div className="AccordionHeaderOnRename">
-      {iconName && <Icon className={leftIconClassName} name={iconName} />}
+      {leftIconName && <Icon className={leftIconClassName} name={leftIconName} />}
       <input
         ref={inputRef}
         value={value}

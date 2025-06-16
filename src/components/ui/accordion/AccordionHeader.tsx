@@ -48,6 +48,7 @@ const AccordionHeader: FC<OwnProps> = ({
   if (isRenaming) {
     return (
       <AccordionHeaderOnRename
+        leftIconName={leftIconName}
         title={title}
         onRenameCancel={onRenameCancel}
         onRenameFinish={onRenameFinish}
@@ -69,6 +70,12 @@ const AccordionHeader: FC<OwnProps> = ({
         <Icon
           name={leftIconName}
           className={buildClassName((leftIconName === 'down' && !isExpanded) && 'rotateDownIcon')}
+        />
+      )}
+      {!leftIconName && !isExpanded && (
+        <Icon
+          name="down"
+          className="rotateDownIcon"
         />
       )}
       <div className="title">{title}</div>

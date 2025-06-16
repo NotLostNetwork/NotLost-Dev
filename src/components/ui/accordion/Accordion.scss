@@ -57,6 +57,10 @@
     color: var(--color-text-secondary);
     transition: all 0.15s ease;
 
+    &.icon-down {
+      font-size: 12px;
+    }
+
     &:hover {
       background-color: var(--color-borders);
     }
@@ -65,6 +69,8 @@
       transform: rotate(-90deg);
     }
   }
+
+  
 
   .actions {
     display: flex;
@@ -118,6 +124,7 @@
     padding-left: 0.5rem;
     border: none;
     border: 1px solid transparent;
+    border-radius: var(--border-radius-default-tiny);
 
     font-size: 0.875rem;
 

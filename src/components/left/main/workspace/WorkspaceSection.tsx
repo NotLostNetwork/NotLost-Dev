@@ -25,7 +25,6 @@ const WorkspaceSection: FC<OwnProps> = ({
 ) => {
   const { renameWorkspaceSection, deleteSectionFromWorkspace } = getActions();
   const [isRenaming, setIsRenaming] = useState(false);
-  const [isExpanded, setIsExpanded] = useState<boolean | undefined>(undefined);
 
   const handleRename = useCallback((newTitle: string) => {
     if (newTitle.length === 0) return;
@@ -65,12 +64,10 @@ const WorkspaceSection: FC<OwnProps> = ({
   return (
     <Accordion
       title={section.title}
-      leftIconName={isExpanded === false ? 'down' : undefined}
       chatIds={section.chatIds}
       isHighlighted={isHighlighted}
       isExpandedByDefault
       isRenaming={isRenaming}
-      onChange={(expanded) => setIsExpanded(expanded)}
       onAddClick={selectForAddingChats}
       onRenameFinish={handleRename}
       onRenameCancel={() => setIsRenaming(false)}
