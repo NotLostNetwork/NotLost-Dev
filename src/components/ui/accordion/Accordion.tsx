@@ -81,19 +81,15 @@ const Accordion: FC<OwnProps> = ({
     );
   };
 
-  const containerClassName = buildClassName(
-    'Accordion',
-    className,
-  );
-
   return (
     <ListItem
       isStatic
       withPortalForMenu
       contextActions={contextActions}
       onClick={() => {}}
+      className={className}
     >
-      <div className={containerClassName}>
+      <div className="Accordion">
         <AccordionHeader
           title={title}
           leftIconName={leftIconName}

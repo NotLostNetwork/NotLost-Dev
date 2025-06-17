@@ -26,11 +26,15 @@
   }
 }
 
-:global(.ListItem-button) {
-  min-height: unset !important;
-  padding: 0 !important;
+.ListItem {
+  :global(.ListItem-button) {
+    min-height: unset !important;
+    padding: 0 !important;
+  }
+
+  :global(.Chat .ListItem-button) {
+    padding: 0.25rem 0.5rem !important;
+  }
 }
 
-:global(.Chat .ListItem-button) {
-  padding: 0.25rem 0.5rem !important;
-}
+

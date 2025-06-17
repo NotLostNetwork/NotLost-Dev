@@ -7,7 +7,7 @@
 .Header {
   display: flex;
   align-items: center;
-  padding: 0 0.375rem 1rem 0.5rem;
+  padding: 0 0.375rem 0.5rem 0.5rem;
 
   .headerTitle {
     font-size: 12px;
@@ -26,6 +26,7 @@
 }
 
 .Chats {
+  padding-left: 0.5rem;
   > * + * {
     margin-top: 1px;
   }

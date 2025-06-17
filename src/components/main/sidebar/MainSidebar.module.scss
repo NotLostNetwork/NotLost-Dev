@@ -28,4 +28,8 @@
   :global(.AccordionHeader .title) {
     font-size: 12px;
   }
+
+  :global(.ListItem-button) {
+    padding: 0;
+  }
 }
