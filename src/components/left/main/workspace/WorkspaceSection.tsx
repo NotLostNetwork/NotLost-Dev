@@ -8,6 +8,7 @@ import type { MenuItemContextAction } from '../../../ui/ListItem';
 import { compact } from '../../../../util/iteratees';
 
 import Accordion from '../../../ui/accordion/Accordion';
+import AccordionSavedState from '../../../ui/accordion/AccordionSavedState';
 
 import styles from './WorkspaceSection.module.scss';
 
@@ -62,18 +63,25 @@ const WorkspaceSection: FC<OwnProps> = ({
   }, [handleDelete]);
 
   return (
-    <Accordion
-      title={section.title}
-      chatIds={section.chatIds}
-      isHighlighted={isHighlighted}
-      isExpandedByDefault
-      isRenaming={isRenaming}
-      onAddClick={selectForAddingChats}
-      onRenameFinish={handleRename}
-      onRenameCancel={() => setIsRenaming(false)}
-      contextActions={contextActions}
-      className={styles.accordion}
-    />
+
+    <AccordionSavedState id={section.id}>
+      {({ isExpandedByDefault, onChange }) => (
+        <Accordion
+          key={section.id}
+          title={section.title}
+          chatIds={section.chatIds}
+          isHighlighted={isHighlighted}
+          isExpandedByDefault={isExpandedByDefault}
+          onChange={onChange}
+          isRenaming={isRenaming}
+          onAddClick={selectForAddingChats}
+          onRenameFinish={handleRename}
+          onRenameCancel={() => setIsRenaming(false)}
+          contextActions={contextActions}
+          className={styles.accordion}
+        />
+      )}
+    </AccordionSavedState>
   );
 };
 

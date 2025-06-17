@@ -1,4 +1,4 @@
-import type { FC, TeactNode } from '../../../lib/teact/teact';
+import type { FC } from '../../../lib/teact/teact';
 import {
   memo,
 } from '../../../lib/teact/teact';
@@ -7,24 +7,12 @@ import { LeftColumnContent } from '../../../types';
 
 import buildClassName from '../../../util/buildClassName';
 
-import Accordion from '../../ui/accordion/Accordion';
+import MainSidebarSection from './MainSidebarSection';
 import MainSidebarTab from './MainSidebarTab';
 import MainSidebarTabProfile from './MainSidebarTabProfile';
 import MainSidebarWorkspaces from './MainSidebarWorkspaces';
 
 import styles from './MainSidebar.module.scss';
-
-const Section = ({ title, children }: { title: string; children: TeactNode }) => {
-  return (
-    <Accordion
-      title={title}
-      isExpandedByDefault
-      className={styles.SidebarAccordionSection}
-    >
-      {children}
-    </Accordion>
-  );
-};
 
 const MainSidebar: FC = () => {
   const containerClassName = buildClassName(
@@ -35,11 +23,11 @@ const MainSidebar: FC = () => {
   return (
     <div className={containerClassName}>
       <div className={styles.tabs}>
-        <Section title="Account">
+        <MainSidebarSection title="Account">
           <MainSidebarTabProfile />
-        </Section>
+        </MainSidebarSection>
         <MainSidebarWorkspaces />
-        <Section title="Chats">
+        <MainSidebarSection title="Chats">
           <MainSidebarTab
             title="Unreads"
             iconName="check"
@@ -70,14 +58,14 @@ const MainSidebar: FC = () => {
             iconName="archive"
             leftColumnContent={LeftColumnContent.Archived}
           />
-        </Section>
-        <Section title="Saved">
+        </MainSidebarSection>
+        <MainSidebarSection title="Saved">
           <MainSidebarTab
             title="All"
             iconName="tag"
             leftColumnContent={LeftColumnContent.Saved}
           />
-        </Section>
+        </MainSidebarSection>
       </div>
     </div>
   );

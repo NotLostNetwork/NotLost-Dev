@@ -2715,6 +2715,11 @@ export interface ActionPayloads {
     folderId: string;
     chatIds: string[];
   };
+
+  persistExpandedState: {
+    id: string;
+    isExpanded: boolean;
+  };
 }
 
 export interface RequiredActionPayloads {

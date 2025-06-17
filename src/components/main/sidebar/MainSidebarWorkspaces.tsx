@@ -9,6 +9,7 @@ import { LeftColumnContent } from '../../../types';
 import { selectTabState } from '../../../global/selectors';
 
 import Accordion from '../../ui/accordion/Accordion';
+import AccordionSavedState from '../../ui/accordion/AccordionSavedState';
 import MainSidebarTab from './MainSidebarTab';
 
 import styles from './MainSidebar.module.scss';
@@ -123,22 +124,28 @@ const MainSidebarWorkspaces: FC<OwnProps & StateProps> = ({
   ]);
 
   return (
-    <Accordion
-      title="Spaces"
-      isExpandedByDefault
-      onAddClick={handleStartAddingNewSpace}
-      className={styles.sidebarAccordionSection}
-    >
-      {workspaceTabs}
-      {isAddingNewSpace && (
+    <AccordionSavedState id="main-sidebar-section-Space">
+      {({ isExpandedByDefault, onChange }) => (
         <Accordion
-          isRenaming
-          leftIconName="lamp"
-          onRenameCancel={handleCancelAddingNewSpace}
-          onRenameFinish={handleAddNewWorkspace}
-        />
+          title="Spaces"
+          isExpandedByDefault={isExpandedByDefault}
+          onChange={onChange}
+          onAddClick={handleStartAddingNewSpace}
+          className={styles.sidebarAccordionSection}
+        >
+          {workspaceTabs}
+          {isAddingNewSpace && (
+            <Accordion
+              isRenaming
+              leftIconName="lamp"
+              onRenameCancel={handleCancelAddingNewSpace}
+              onRenameFinish={handleAddNewWorkspace}
+            />
+          )}
+        </Accordion>
       )}
-    </Accordion>
+    </AccordionSavedState>
+
   );
 };
 
