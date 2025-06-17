@@ -49,6 +49,21 @@ class ApiWorkspaceLayer {
     );
   };
 
+  updateWorkspaceChats = async (workspaceId: string, chatIds: string[]): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) => old.map((workspace) => {
+        if (workspace.id === workspaceId) {
+          return {
+            ...workspace,
+            chatIds,
+          };
+        }
+        return workspace;
+      }),
+    );
+  };
+
   // Workspace -> Sections
 
   addSection = async (workspaceId: string, newSection: ApiSection): Promise<void> => {

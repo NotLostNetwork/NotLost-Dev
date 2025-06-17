@@ -2,16 +2,12 @@
   position: relative;
   min-height: 100%;
   padding: 0.5rem 0.5rem 0;
-
-  > * + * {
-    margin-top: 1rem;
-  }
 }
 
 .Header {
   display: flex;
   align-items: center;
-  padding: 0 0.375rem 0 0.5rem;
+  padding: 0 0.375rem 1rem 0.5rem;
 
   .headerTitle {
     font-size: 12px;
@@ -26,6 +22,22 @@
     &:hover {
       background-color: var(--color-chat-hover);
     }
+  }
+}
+
+.Chats {
+  > * + * {
+    margin-top: 1px;
+  }
+
+  &:has(> *) {
+    margin-bottom: 1rem;
+  }
+}
+
+.Sections {
+  > * + * {
+    margin-top: 1px;
   }
 }
 

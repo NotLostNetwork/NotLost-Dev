@@ -2681,6 +2681,10 @@ export interface ActionPayloads {
     workspaceId: string;
     newTitle: string;
   };
+  updateWorkspaceChats: {
+    workspaceId: string;
+    chatIds: string[];
+  };
 
   // Section
   addNewSectionIntoWorkspace: {

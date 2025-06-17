@@ -54,6 +54,7 @@ addActionHandler('addNewWorkspace', (global, actions, payload): ActionReturnType
     id: crypto.randomUUID(),
     title,
     iconName,
+    chatIds: [],
     sections: [],
   };
 
@@ -100,6 +101,31 @@ addActionHandler('renameWorkspace', (global, actions, payload): ActionReturnType
           return {
             ...w,
             title: newTitle,
+          };
+        }
+
+        return w;
+      }),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, chatIds } = payload;
+
+  ApiWorkspaceLayer.updateWorkspaceChats(workspaceId, chatIds);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            chatIds,
           };
         }
 

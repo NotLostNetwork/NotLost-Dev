@@ -4,8 +4,7 @@ import {
 } from '../../../../lib/teact/teact';
 import { getActions } from '../../../../global';
 
-import type { ApiInlineFolder, ApiSection } from '../../../../api/notlost/types';
-import type { ActiveEntityType } from './Workspace';
+import type { ActiveEntity, ActiveEntityType } from './Workspace';
 
 import { ALL_FOLDER_ID } from '../../../../config';
 import { filterPeersByQuery } from '../../../../global/helpers/peers';
@@ -16,6 +15,7 @@ import { useFolderManagerForOrderedIds } from '../../../../hooks/useFolderManage
 
 import Icon from '../../../common/icons/Icon';
 import PeerPicker from '../../../common/pickers/PeerPicker';
+import Button from '../../../ui/Button';
 import Portal from '../../../ui/Portal';
 import SearchInput from '../../../ui/SearchInput';
 import Transition from '../../../ui/Transition';
@@ -23,29 +23,31 @@ import Transition from '../../../ui/Transition';
 import styles from './WorkspaceRightSidebar.module.scss';
 
 type OwnProps = {
-  activeEntity?: ApiSection | ApiInlineFolder;
+  activeEntity?: ActiveEntity;
   activeEntityType?: ActiveEntityType;
   onClose?: NoneToVoidFunction;
+  handleStartAddingNewSection: NoneToVoidFunction;
 };
 
 const WorkspaceRightSidebar: FC<OwnProps> = ({
   activeEntity,
   activeEntityType,
   onClose,
+  handleStartAddingNewSection,
 }) => {
-  const { updateSectionChats } = getActions();
+  const { updateWorkspaceChats, updateSectionChats } = getActions();
+  const [searchValue, setSearchValue] = useState('');
+
   const folderAllOrderedIds = useFolderManagerForOrderedIds(ALL_FOLDER_ID);
 
   const displayedIds = useMemo(() => {
     const chatIds = folderAllOrderedIds || [];
     return unique(
-      filterPeersByQuery({ ids: chatIds, query: undefined, type: 'chat' }),
+      filterPeersByQuery({ ids: chatIds, query: searchValue, type: 'chat' }),
     );
-  }, [folderAllOrderedIds]);
+  }, [folderAllOrderedIds, searchValue]);
 
   const [isAnimating, setIsAnimating] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedIds, setSelectedIds] = useState<string[]>(activeEntity?.chatIds || []);
 
   useEffect(() => {
     if (activeEntity) {
@@ -60,18 +62,21 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
     }
   }, [activeEntity]);
 
-  useEffect(() => {
-    setSelectedIds(activeEntity?.chatIds || []);
-  }, [activeEntity]);
-
-  const handleAddChat = useCallback((ids: string[]) => {
+  const handleSelectedIdsChange = useCallback((newSelectedIds: string[]) => {
     if (!activeEntity || !activeEntityType) return;
 
     switch (activeEntityType) {
+      case 'workspace': {
+        updateWorkspaceChats({
+          workspaceId: activeEntity.id,
+          chatIds: newSelectedIds,
+        });
+        break;
+      }
       case 'section': {
         updateSectionChats({
           sectionId: activeEntity.id,
-          chatIds: ids,
+          chatIds: newSelectedIds,
         });
         break;
       }
@@ -79,13 +84,40 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
       default:
         break;
     }
-  }, [activeEntity, activeEntityType]);
+  }, [activeEntity, activeEntityType, updateWorkspaceChats, updateSectionChats]);
 
-  useEffect(() => {
-    if (!activeEntity) return;
+  const renderCreateNewBlockInside = () => {
+    // add a section in workspace, or add a folder in section
 
-    handleAddChat(selectedIds);
-  }, [activeEntity, handleAddChat, selectedIds]);
+    switch (activeEntityType) {
+      case 'workspace': {
+        return (
+          <Button
+            onClick={handleStartAddingNewSection}
+            size="tiny"
+            color="bezeled"
+            noForcedUpperCase
+          >
+            Create new section
+          </Button>
+        );
+      }
+
+      case 'section': {
+        return (
+          <Button
+            size="tiny"
+            color="bezeled"
+            noForcedUpperCase
+          >
+            Create new folder
+          </Button>
+        );
+      }
+    }
+
+    return undefined;
+  };
 
   const containerClassName = buildClassName(styles.container);
 
@@ -101,14 +133,21 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
           {activeEntity && (
             <div className={styles.sidebar}>
               <div className={styles.header}>
-                <div>Add chats</div>
+                <div className={styles.headerTitle}>
+                  Modify
+                  {' '}
+                  {activeEntity.title}
+                </div>
                 <Icon name="close" className={styles.closeButton} onClick={onClose} />
               </div>
               <SearchInput onChange={setSearchValue} />
+              <div style="padding: 0.5rem 0">
+                {renderCreateNewBlockInside()}
+              </div>
 
               <PeerPicker
                 itemIds={displayedIds}
-                selectedIds={selectedIds}
+                selectedIds={activeEntity.chatIds}
                 filterValue={searchValue}
                 categoryPlaceholderKey="FilterChatTypes"
                 searchInputId="new-group-picker-search"
@@ -117,7 +156,7 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
                 allowMultiple
                 itemInputType="checkbox"
                 className={styles.picker}
-                onSelectedIdsChange={setSelectedIds}
+                onSelectedIdsChange={handleSelectedIdsChange}
               />
             </div>
           )}

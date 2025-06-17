@@ -16,6 +16,7 @@ export type ApiWorkspace = {
   id: string;
   title: string;
   iconName: IconName;
+  chatIds: string[];
   sections: ApiSection[];
 };
 

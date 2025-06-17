@@ -2,4 +2,7 @@
   :global(.AccordionHeader .title) {
     font-size: 12px;
   }
+  :global(.AccordionInner) {
+    padding-bottom: 1rem;;
+  }
 }
