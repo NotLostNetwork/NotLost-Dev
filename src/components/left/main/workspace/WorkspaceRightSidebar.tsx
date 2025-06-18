@@ -134,8 +134,6 @@ const WorkspaceRightSidebar: FC<OwnProps> = ({
             <div className={styles.sidebar}>
               <div className={styles.header}>
                 <div className={styles.headerTitle}>
-                  Modify
-                  {' '}
                   {activeEntity.title}
                 </div>
                 <Icon name="close" className={styles.closeButton} onClick={onClose} />

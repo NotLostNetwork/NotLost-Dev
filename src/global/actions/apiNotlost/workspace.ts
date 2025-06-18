@@ -140,10 +140,11 @@ addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionRetur
 // Section
 
 addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): ActionReturnType => {
-  const { title, workspaceId } = payload;
+  const { title, workspaceId, callback } = payload;
+  const id = crypto.randomUUID();
 
   const newSection: ApiSection = {
-    id: crypto.randomUUID(),
+    id,
     title,
     chatIds: [],
     folders: [],
@@ -170,6 +171,8 @@ addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): Actio
   };
 
   setGlobal(global);
+
+  callback?.(newSection);
 });
 
 addActionHandler('deleteSectionFromWorkspace', (global, actions, payload): ActionReturnType => {

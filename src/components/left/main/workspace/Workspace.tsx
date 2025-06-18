@@ -31,6 +31,7 @@ const Workspace: FC<OwnProps> = ({
 
   const handleUnselectEntityForChatsAdd = useCallback(() => {
     setActiveEntity(undefined);
+    setActiveEntityType(undefined);
   }, []);
 
   const handleSetActiveEntity = useCallback(
@@ -56,9 +57,14 @@ const Workspace: FC<OwnProps> = ({
     'custom-scroll',
   );
 
+  const headerClassName = buildClassName(
+    styles.header,
+    activeEntityType === 'workspace' && styles.selected,
+  );
+
   return (
     <div className={containerClassName}>
-      <div className={styles.header}>
+      <div className={headerClassName}>
         <div className={styles.headerTitle}>{workspace?.title}</div>
         <Icon
           className={styles.addSectionButton}
@@ -89,6 +95,7 @@ const Workspace: FC<OwnProps> = ({
           <WorkspaceSectionNew
             workspaceId={workspace.id}
             onCreationCancel={() => setIsAddingNewSection(false)}
+            onCreationFinish={(section) => handleSetActiveEntity(section, 'section')}
           />
         )}
       </div>
