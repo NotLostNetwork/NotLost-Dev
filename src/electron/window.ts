@@ -4,7 +4,7 @@ import {
 } from 'electron';
 import path from 'path';
 
-import type { WindowButtonsPosition } from '../types/electron';
+import type { WebContentsViewBounds, WindowButtonsPosition } from '../types/electron';
 import { ElectronAction, ElectronEvent } from '../types/electron';
 
 import setupAutoUpdates, { AUTO_UPDATE_SETTING_KEY, getIsAutoUpdateEnabled } from './autoUpdates';
@@ -16,6 +16,7 @@ import {
   hasExtraWindows, IS_FIRST_RUN, IS_MAC_OS, IS_PREVIEW, IS_PRODUCTION, IS_WINDOWS,
   reloadWindows, store, WINDOW_BUTTONS_POSITION, windows,
 } from './utils';
+import { WebContentsManager } from './webContentsManager';
 import windowStateKeeper from './windowState';
 
 const ALLOWED_DEVICE_ORIGINS = ['http://localhost:1234', 'file://'];
@@ -69,6 +70,8 @@ export function createWindow(url?: string) {
       trafficLightPosition: WINDOW_BUTTONS_POSITION.standard,
     }),
   });
+
+  WebContentsManager.init(window);
 
   windowState.manage(window);
 
@@ -222,6 +225,15 @@ export function setupElectronActionHandlers() {
   ipcMain.handle(ElectronAction.GET_IS_TRAY_ICON_ENABLED, () => tray.isEnabled);
 
   ipcMain.handle(ElectronAction.RESTORE_LOCAL_STORAGE, () => restoreLocalStorage());
+  ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_BOUNDS, (_, bounds: WebContentsViewBounds) => {
+    WebContentsManager.getInstance().resize(bounds);
+  });
+  ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_URL, (_, url: string) => {
+    WebContentsManager.getInstance().open(url);
+  });
+  ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_VISIBLE, (_, isVisible: boolean) => {
+    WebContentsManager.getInstance().setCurrentViewVisible(isVisible);
+  });
 }
 
 export function setupCloseHandlers() {

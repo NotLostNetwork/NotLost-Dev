@@ -244,6 +244,12 @@ addActionHandler('openChat', (global, actions, payload): ActionReturnType => {
   } else if (isChatOnlySummary && !chat.isMin) {
     actions.requestChatUpdate({ chatId: id });
   }
+
+  setTimeout(() => {
+    actions.setWebContentsViewVisible({
+      value: false,
+    });
+  }, 100);
 });
 
 addActionHandler('openSavedDialog', (global, actions, payload): ActionReturnType => {

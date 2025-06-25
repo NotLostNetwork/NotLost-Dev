@@ -3,6 +3,7 @@ import type {
 import type React from '../../lib/teact/teact';
 import {
   memo, useEffect, useMemo,
+  useRef,
   useState,
 } from '../../lib/teact/teact';
 import { getActions, withGlobal } from '../../global';
@@ -64,7 +65,7 @@ import {
   selectUserFullInfo,
 } from '../../global/selectors';
 import {
-  IS_ANDROID, IS_ELECTRON, IS_IOS, IS_SAFARI, IS_TRANSLATION_SUPPORTED, MASK_IMAGE_DISABLED,
+  IS_ANDROID, IS_IOS, IS_SAFARI, IS_TRANSLATION_SUPPORTED, MASK_IMAGE_DISABLED,
 } from '../../util/browser/windowEnvironment';
 import buildClassName from '../../util/buildClassName';
 import buildStyle from '../../util/buildStyle';
@@ -81,6 +82,7 @@ import useOldLang from '../../hooks/useOldLang';
 import usePrevDuringAnimation from '../../hooks/usePrevDuringAnimation';
 import usePreviousDeprecated from '../../hooks/usePreviousDeprecated';
 import { useResize } from '../../hooks/useResize';
+import useResizeObserver from '../../hooks/useResizeObserver';
 import useSyncEffect from '../../hooks/useSyncEffect';
 import useWindowSize from '../../hooks/window/useWindowSize';
 import usePinnedMessage from './hooks/usePinnedMessage';
@@ -243,6 +245,8 @@ function MiddleColumn({
     resetLeftColumnWidth,
     unblockUser,
   } = getActions();
+
+  const containerRef = useRef<HTMLDivElement | undefined>(undefined);
 
   const { width: windowWidth } = useWindowSize();
   const { isTablet, isDesktop } = useAppLayout();
@@ -442,7 +446,6 @@ function MiddleColumn({
     backgroundColor && styles.customBgColor,
     customBackground && isBackgroundBlurred && styles.blurred,
     isRightColumnShown && styles.withRightColumn,
-    IS_ELECTRON && !(renderingChatId && renderingThreadId) && styles.draggable,
   );
 
   const messagingDisabledClassName = buildClassName(
@@ -494,8 +497,19 @@ function MiddleColumn({
   );
   const withExtraShift = Boolean(isMessagingDisabled || isSelectModeActive);
 
+  useResizeObserver(containerRef, (entry) => {
+    const rect = entry.target.getBoundingClientRect();
+    window.electron?.setWebContentsViewBounds({
+      x: rect.left + 1, // include left column border
+      y: rect.top,
+      height: window.innerHeight - 22, // bottom inset (padding + border)
+      width: rect.width - 1, // include right border
+    });
+  });
+
   return (
     <div
+      ref={containerRef}
       id="MiddleColumn"
       className={className}
       onTransitionEnd={handleCssTransitionEnd}

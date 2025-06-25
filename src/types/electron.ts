@@ -17,7 +17,16 @@ export enum ElectronAction {
   SET_IS_TRAY_ICON_ENABLED = 'set-is-tray-icon-enabled',
   GET_IS_TRAY_ICON_ENABLED = 'get-is-tray-icon-enabled',
   RESTORE_LOCAL_STORAGE = 'restore-local-storage',
+  SET_WEB_CONTENTS_VIEW_BOUNDS = 'set-web-contents-view-bounds',
+  SET_WEB_CONTENTS_VIEW_URL = 'set-web-contents-view-url',
+  SET_WEB_CONTENTS_VIEW_VISIBLE = 'set-web-contents-view-visible',
 }
+export type WebContentsViewBounds = {
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+};
 
 export type WindowButtonsPosition = 'standard' | 'lowered';
 
@@ -37,6 +46,9 @@ export interface ElectronApi {
   setIsTrayIconEnabled: (value: boolean) => Promise<void>;
   getIsTrayIconEnabled: () => Promise<boolean>;
   restoreLocalStorage: () => Promise<void>;
+  setWebContentsViewBounds: (bounds: WebContentsViewBounds) => Promise<void>;
+  setWebContentsViewUrl: (url: string) => Promise<void>;
+  setWebContentsViewVisible: (isVisible: boolean) => Promise<void>;
 
   on: (eventName: ElectronEvent, callback: any) => VoidFunction;
 }

@@ -2729,6 +2729,11 @@ export interface ActionPayloads {
     id: string;
     isExpanded: boolean;
   };
+
+  // Web contents view
+  loadWebContentsViewUrl: { url: string };
+  setWebContentsViewVisible: { value: boolean };
+
 }
 
 export interface RequiredActionPayloads {

@@ -37,6 +37,7 @@ import './ui/reactions';
 import './ui/stories';
 import './ui/statistics';
 import './ui/workspace';
+import './ui/webContentsView';
 import './apiUpdaters/initial';
 import './apiUpdaters/chats';
 import './apiUpdaters/messages';

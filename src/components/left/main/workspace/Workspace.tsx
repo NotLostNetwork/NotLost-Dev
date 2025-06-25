@@ -1,5 +1,6 @@
 import type { FC } from '../../../../lib/teact/teact';
 import { memo, useCallback, useEffect, useState } from '../../../../lib/teact/teact';
+import { getActions } from '../../../../global';
 
 import type { ApiInlineFolder, ApiSection, ApiWorkspace } from '../../../../api/notlost/types';
 
@@ -24,6 +25,7 @@ type OwnProps = {
 const Workspace: FC<OwnProps> = ({
   workspace,
 }) => {
+  const { loadWebContentsViewUrl } = getActions();
   const [activeEntity, setActiveEntity] = useState<ActiveEntity | undefined>(undefined);
   const [activeEntityType, setActiveEntityType] = useState<ActiveEntityType | undefined>(undefined);
 
@@ -39,6 +41,12 @@ const Workspace: FC<OwnProps> = ({
       setActiveEntity(entity);
       setActiveEntityType(entityType);
     }, []);
+
+  const handleOpenWebContentsView = (url: string) => {
+    loadWebContentsViewUrl({
+      url,
+    });
+  };
 
   useEffect(() => {
     // refresh active entity on workspace update, should refactor somehow
@@ -99,6 +107,11 @@ const Workspace: FC<OwnProps> = ({
           />
         )}
       </div>
+      <div onClick={() => handleOpenWebContentsView('https://notion.so')}>Notion tasks</div>
+      <div onClick={() => handleOpenWebContentsView('https://www.notion.so/new')}>New Notion note</div>
+      <div onClick={() => handleOpenWebContentsView('https://figma.com')}>Figma main design</div>
+      <div onClick={() => handleOpenWebContentsView('https://meet.google.com/new')}>Create new Meet</div>
+      <div onClick={() => handleOpenWebContentsView('https://www.icloud.com/notes')}>Apple notes</div>
       <WorkspaceRightSidebar
         activeEntity={activeEntity}
         activeEntityType={activeEntityType}
