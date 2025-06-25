@@ -2,14 +2,14 @@ import type { FC } from '@teact';
 import { memo, useCallback } from '@teact';
 import { getActions } from '../../../../global';
 
-import type { ApiSection } from '../../../../api/notlost/types';
+import type { ApiWorkspaceSection } from '../../../../api/notlost/types';
 
 import Accordion from '../../../ui/accordion/Accordion';
 
 type OwnProps = {
   workspaceId: string;
   onCreationCancel: NoneToVoidFunction;
-  onCreationFinish: (section: ApiSection) => void;
+  onCreationFinish: (section: ApiWorkspaceSection) => void;
 };
 
 const WorkspaceSectionNew: FC<OwnProps> = ({

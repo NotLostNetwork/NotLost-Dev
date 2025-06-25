@@ -6,7 +6,7 @@ export const NotLostLocalStorageKeys = {
 
 export type NotLostLocalStorageKey = keyof typeof NotLostLocalStorageKeys;
 
-export type ApiInlineFolder = {
+export type ApiWorkspaceFolder = {
   id: string;
   title: string;
   chatIds: string[];
@@ -17,17 +17,17 @@ export type ApiWorkspace = {
   title: string;
   iconName: IconName;
   chatIds: string[];
-  sections: ApiSection[];
+  sections: ApiWorkspaceSection[];
 };
 
-export type ApiSection = {
+export type ApiWorkspaceSection = {
   id: string;
   title: string;
   chatIds: string[];
-  folders: ApiInlineFolder[];
+  folders: ApiWorkspaceFolder[];
 };
 
-export type ApiLink = {
+export type ApiWorkspaceLink = {
   id: string;
   title: string;
   url: string;

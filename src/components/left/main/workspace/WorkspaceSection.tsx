@@ -2,7 +2,7 @@ import type { FC } from '@teact';
 import { memo, useCallback, useMemo, useState } from '@teact';
 import { getActions } from '../../../../global';
 
-import type { ApiSection } from '../../../../api/notlost/types';
+import type { ApiWorkspaceSection } from '../../../../api/notlost/types';
 import type { MenuItemContextAction } from '../../../ui/ListItem';
 
 import { compact } from '../../../../util/iteratees';
@@ -13,7 +13,7 @@ import AccordionSavedState from '../../../ui/accordion/AccordionSavedState';
 import styles from './WorkspaceSection.module.scss';
 
 type OwnProps = {
-  section: ApiSection;
+  section: ApiWorkspaceSection;
   isHighlighted?: boolean;
   selectForAddingChats?: NoneToVoidFunction;
 };

@@ -2,7 +2,7 @@ import type { FC } from '../../../../lib/teact/teact';
 import { memo, useCallback, useEffect, useState } from '../../../../lib/teact/teact';
 import { withGlobal } from '../../../../global';
 
-import type { ApiInlineFolder, ApiSection, ApiWorkspace } from '../../../../api/notlost/types';
+import type { ApiWorkspace, ApiWorkspaceFolder, ApiWorkspaceSection } from '../../../../api/notlost/types';
 
 import buildClassName from '../../../../util/buildClassName';
 import { ChatAnimationTypes } from '../hooks';
@@ -17,7 +17,7 @@ import WorkspaceSectionNew from './WorkspaceSectionNew';
 import styles from './Workspace.module.scss';
 
 export type ActiveEntityType = 'workspace' | 'section' | 'folder';
-export type ActiveEntity = ApiWorkspace | ApiSection | ApiInlineFolder;
+export type ActiveEntity = ApiWorkspace | ApiWorkspaceSection | ApiWorkspaceFolder;
 
 type OwnProps = {
   workspace: ApiWorkspace;

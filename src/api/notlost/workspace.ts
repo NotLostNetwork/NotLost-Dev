@@ -1,4 +1,4 @@
-import type { ApiInlineFolder, ApiSection, ApiWorkspace } from './types';
+import type { ApiWorkspace, ApiWorkspaceFolder, ApiWorkspaceSection } from './types';
 import { NotLostLocalStorageKeys } from './types';
 
 import { MAIN_IDB_STORE } from '../../util/browser/idb';
@@ -10,7 +10,7 @@ class ApiWorkspaceLayer {
     return workspace.sections.findIndex((s) => s.id === sectionId);
   }
 
-  private findFolderIndex(section: ApiSection, folderId: string) {
+  private findFolderIndex(section: ApiWorkspaceSection, folderId: string) {
     return section.folders.findIndex((f) => f.id === folderId);
   }
 
@@ -66,7 +66,7 @@ class ApiWorkspaceLayer {
 
   // Workspace -> Sections
 
-  addSection = async (workspaceId: string, newSection: ApiSection): Promise<void> => {
+  addSection = async (workspaceId: string, newSection: ApiWorkspaceSection): Promise<void> => {
     await this.store.update<ApiWorkspace[]>(
       NotLostLocalStorageKeys.workspaces,
       (old = []) => old.map((workspace) => {
@@ -139,7 +139,7 @@ class ApiWorkspaceLayer {
 
   // Workspace -> Section -> Folders
 
-  addFolder = async (sectionId: string, newFolder: ApiInlineFolder): Promise<void> => {
+  addFolder = async (sectionId: string, newFolder: ApiWorkspaceFolder): Promise<void> => {
     await this.store.update<ApiWorkspace[]>(
       NotLostLocalStorageKeys.workspaces,
       (old = []) => old.map((workspace) => {

@@ -1,4 +1,4 @@
-import type { ApiSection } from '../../api/notlost/types';
+import type { ApiWorkspaceSection } from '../../api/notlost/types';
 import type {
   ApiAttachBot,
   ApiAttachment,
@@ -2695,7 +2695,7 @@ export interface ActionPayloads {
   addNewSectionIntoWorkspace: {
     workspaceId: string;
     title: string;
-    callback?: (section: ApiSection) => void;
+    callback?: (section: ApiWorkspaceSection) => void;
   };
   deleteSectionFromWorkspace: {
     sectionId: string;

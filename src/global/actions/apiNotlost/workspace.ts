@@ -1,4 +1,4 @@
-import type { ApiInlineFolder, ApiSection, ApiWorkspace } from '../../../api/notlost/types';
+import type { ApiWorkspace, ApiWorkspaceFolder, ApiWorkspaceSection } from '../../../api/notlost/types';
 import type { ActionReturnType } from '../../types';
 
 import ApiWorkspaceLayer from '../../../api/notlost/workspace';
@@ -20,7 +20,7 @@ const findWorkspaceByFolderId = (workspaces: ApiWorkspace[], folderId: string): 
   );
 };
 
-const findSectionByFolderId = (sections: ApiSection[], folderId: string): ApiSection | undefined => {
+const findSectionByFolderId = (sections: ApiWorkspaceSection[], folderId: string): ApiWorkspaceSection | undefined => {
   return sections.find((s) =>
     s.folders.some((f) => f.id === folderId),
   ) || undefined;
@@ -143,7 +143,7 @@ addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): Actio
   const { title, workspaceId, callback } = payload;
   const id = crypto.randomUUID();
 
-  const newSection: ApiSection = {
+  const newSection: ApiWorkspaceSection = {
     id,
     title,
     chatIds: [],
@@ -268,7 +268,7 @@ addActionHandler('updateSectionChats', (global, actions, payload): ActionReturnT
 addActionHandler('addNewFolderIntoSection', (global, actions, payload): ActionReturnType => {
   const { sectionId, title } = payload;
 
-  const newFolder: ApiInlineFolder = {
+  const newFolder: ApiWorkspaceFolder = {
     id: crypto.randomUUID(),
     title,
     chatIds: [],
