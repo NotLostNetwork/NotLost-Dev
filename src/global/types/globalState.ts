@@ -275,6 +275,10 @@ export type GlobalState = {
     recommended?: ApiChatFolder[];
   };
 
+  chatFilters: {
+    shouldShowLastMessage: boolean;
+  };
+
   phoneCall?: ApiPhoneCall;
 
   fileUploads: {

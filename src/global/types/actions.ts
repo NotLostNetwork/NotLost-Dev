@@ -1054,6 +1054,9 @@ export interface ActionPayloads {
   } & WithTabId | undefined;
   loadAccountDaysTtl: undefined;
 
+  // Chats filters
+  toggleShowLastMessage: undefined;
+
   // Chats
   loadPeerSettings: {
     peerId: string;
