@@ -2673,6 +2673,7 @@ export interface ActionPayloads {
   // Workspace
   loadAllWorkspaces: undefined;
   setActiveWorkspaceId: string;
+  setWorkspaceSelectedItemId: string | undefined;
 
   addNewWorkspace: {
     title: string;

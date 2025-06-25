@@ -23,9 +23,9 @@ const MainSidebar: FC = () => {
   return (
     <div className={containerClassName}>
       <div className={styles.tabs}>
-        <MainSidebarSection title="Account">
+        {/* <MainSidebarSection title="Account">
           <MainSidebarTabProfile />
-        </MainSidebarSection>
+        </MainSidebarSection> */}
         <MainSidebarWorkspaces />
         <MainSidebarSection title="Chats">
           <MainSidebarTab

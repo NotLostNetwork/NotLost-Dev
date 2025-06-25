@@ -42,7 +42,6 @@
 }
 
 .Chats {
-  padding-left: 0.5rem;
   > * + * {
     margin-top: 1px;
   }
@@ -66,4 +65,76 @@
   top: 1rem;
   right: -2rem;
   background-color: aqua;
+}
+
+.Link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+
+  :global(.icon) {
+    color: var(--color-links);
+  }
+
+  .linkTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+.LinkIconContainer {
+  height: 2rem;
+  width: 2rem;
+  display: grid;
+  place-content: center;
+  border-radius: var(--border-radius-forum-avatar);
+  background-color: rgba(var(--color-links-rgb), 0.1);
+  cursor: pointer;
+
+  transition: background-color 0.15s ease-in-out;
+
+  img {
+    height: 1rem;
+    width: 1rem;
+    transition: all 0.15s ease-in-out;
+  }
+
+  &.withFavicon {
+    background-color: var(--color-chat-hover);
+  }
+}
+
+.CustomListItem {
+  :global(.ListItem-button) {
+    padding: 0;
+    min-height: 0;
+
+    &:hover {
+      background-color: var(--color-chat-hover);
+    }
+  }
+
+  &.selected {
+    :global(.ListItem-button) {
+      background-color: var(--color-telegram-blue);
+      color: white;
+
+      i {
+        color: white;
+      }
+    }
+
+    .LinkIconContainer {
+      background-color: transparent;
+
+      img {
+        transform: scale(1.2);
+      }
+
+      &.withFavicon {
+        background-color: transparent;
+      }
+    }
+  }
 }

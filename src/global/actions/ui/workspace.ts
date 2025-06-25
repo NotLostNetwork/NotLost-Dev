@@ -13,3 +13,15 @@ addActionHandler('setActiveWorkspaceId', (global, actions, payload): ActionRetur
 
   setGlobal(global);
 });
+
+addActionHandler('setWorkspaceSelectedItemId', (global, actions, payload): ActionReturnType => {
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      selectedItemId: payload,
+    },
+  };
+
+  setGlobal(global);
+});

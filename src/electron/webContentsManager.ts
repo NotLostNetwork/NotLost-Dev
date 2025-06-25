@@ -3,9 +3,13 @@ import { WebContentsView } from 'electron';
 
 import type { WebContentsViewBounds } from '../types/electron';
 
+import { getImageAsDataURL } from './utils';
+
 type Tab = {
   view: WebContentsView;
   url: string;
+  faviconUrl?: string;
+  title?: string;
 };
 
 export class WebContentsManager {
@@ -22,26 +26,65 @@ export class WebContentsManager {
     width: 0,
   };
 
-  open(url: string) {
-    if (this.currentView) {
-      this.mainWindow.contentView.removeChildView(this.currentView);
-    }
+  open(url: string): Promise<{ faviconUrl?: string; title?: string }> {
+    return new Promise((resolve) => {
+      if (this.currentView) {
+        this.mainWindow.contentView.removeChildView(this.currentView);
+      }
 
-    const alreadyOpenedTab = this.tabs.find((t) => t.url === url);
+      const alreadyOpenedTab = this.tabs.find((t) => t.url === url);
 
-    if (alreadyOpenedTab) {
-      this.mainWindow.contentView.addChildView(alreadyOpenedTab.view);
-      this.currentView = alreadyOpenedTab.view;
-      return;
-    }
+      if (alreadyOpenedTab) {
+        this.mainWindow.contentView.addChildView(alreadyOpenedTab.view);
+        this.currentView = alreadyOpenedTab.view;
+        return resolve({
+          faviconUrl: alreadyOpenedTab.faviconUrl,
+          title: alreadyOpenedTab.title,
+        });
+      }
 
-    const newView = new WebContentsView();
-    newView.webContents.loadURL(url);
-    newView.setBounds(this.bounds);
+      const newView = new WebContentsView();
+      newView.setBounds(this.bounds);
+      newView.webContents.loadURL(url);
 
-    this.tabs.push({ view: newView, url });
-    this.currentView = newView;
-    this.mainWindow.contentView.addChildView(newView);
+      let faviconUrl: string | undefined;
+      let title: string | undefined;
+      let viewAdded = false;
+
+      const tryFinish = () => {
+        if (!viewAdded && faviconUrl && title) {
+          const tab = { view: newView, url, faviconUrl, title };
+          this.tabs.push(tab);
+          this.mainWindow.contentView.addChildView(newView);
+          this.currentView = newView;
+          viewAdded = true;
+          resolve({ faviconUrl, title });
+        }
+      };
+
+      newView.webContents.once('page-favicon-updated', (e, icons) => {
+        getImageAsDataURL(icons[0]).then((dataUrl) => {
+          faviconUrl = dataUrl;
+          tryFinish();
+        });
+      });
+
+      newView.webContents.once('page-title-updated', (e, newTitle) => {
+        title = newTitle;
+        tryFinish();
+      });
+
+      /* setTimeout(() => {
+        if (!viewAdded) {
+          const tab = { view: newView, url, faviconUrl, title };
+          this.tabs.push(tab);
+          this.mainWindow.contentView.addChildView(newView);
+          this.currentView = newView;
+          viewAdded = true;
+          resolve({ faviconUrl, title });
+        }
+      }, 2000); */
+    });
   }
 
   resize(bounds: WebContentsViewBounds) {

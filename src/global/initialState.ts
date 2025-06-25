@@ -336,6 +336,7 @@ export const INITIAL_GLOBAL_STATE: GlobalState = {
     activeId: undefined,
     byOrder: [],
     areLoaded: false,
+    selectedItemId: undefined,
   },
   expandedState: {},
 };

@@ -245,11 +245,15 @@ addActionHandler('openChat', (global, actions, payload): ActionReturnType => {
     actions.requestChatUpdate({ chatId: id });
   }
 
-  setTimeout(() => {
+  actions.setWorkspaceSelectedItemId(undefined);
+  actions.setWebContentsViewVisible({
+    value: false,
+  });
+  /* setTimeout(() => {
     actions.setWebContentsViewVisible({
       value: false,
     });
-  }, 100);
+  }, 100); */
 });
 
 addActionHandler('openSavedDialog', (global, actions, payload): ActionReturnType => {

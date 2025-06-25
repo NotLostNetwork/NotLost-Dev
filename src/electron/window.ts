@@ -229,7 +229,7 @@ export function setupElectronActionHandlers() {
     WebContentsManager.getInstance().resize(bounds);
   });
   ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_URL, (_, url: string) => {
-    WebContentsManager.getInstance().open(url);
+    return WebContentsManager.getInstance().open(url);
   });
   ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_VISIBLE, (_, isVisible: boolean) => {
     WebContentsManager.getInstance().setCurrentViewVisible(isVisible);

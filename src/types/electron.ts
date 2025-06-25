@@ -20,6 +20,8 @@ export enum ElectronAction {
   SET_WEB_CONTENTS_VIEW_BOUNDS = 'set-web-contents-view-bounds',
   SET_WEB_CONTENTS_VIEW_URL = 'set-web-contents-view-url',
   SET_WEB_CONTENTS_VIEW_VISIBLE = 'set-web-contents-view-visible',
+  ON_WEB_CONTENTS_VIEW_FAVICON = 'on-web-contents-view-favicon',
+  ON_WEB_CONTENTS_VIEW_TITLE = 'on-web-contents-view-title',
 }
 export type WebContentsViewBounds = {
   x: number;
@@ -47,7 +49,7 @@ export interface ElectronApi {
   getIsTrayIconEnabled: () => Promise<boolean>;
   restoreLocalStorage: () => Promise<void>;
   setWebContentsViewBounds: (bounds: WebContentsViewBounds) => Promise<void>;
-  setWebContentsViewUrl: (url: string) => Promise<void>;
+  setWebContentsViewUrl: (url: string) => Promise<{ faviconUrl?: string; title?: string }>;
   setWebContentsViewVisible: (isVisible: boolean) => Promise<void>;
 
   on: (eventName: ElectronEvent, callback: any) => VoidFunction;

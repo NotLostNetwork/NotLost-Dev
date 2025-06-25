@@ -26,3 +26,9 @@ export type ApiSection = {
   chatIds: string[];
   folders: ApiInlineFolder[];
 };
+
+export type ApiLink = {
+  id: string;
+  title: string;
+  url: string;
+};

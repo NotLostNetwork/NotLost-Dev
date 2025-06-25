@@ -1,6 +1,6 @@
 import type { FC } from '../../../../lib/teact/teact';
 import { memo, useCallback, useEffect, useState } from '../../../../lib/teact/teact';
-import { getActions } from '../../../../global';
+import { withGlobal } from '../../../../global';
 
 import type { ApiInlineFolder, ApiSection, ApiWorkspace } from '../../../../api/notlost/types';
 
@@ -9,6 +9,7 @@ import { ChatAnimationTypes } from '../hooks';
 
 import Icon from '../../../common/icons/Icon';
 import Chat from '../Chat';
+import WorkspaceLink from './WorkspaceLink';
 import WorkspaceRightSidebar from './WorkspaceRightSidebar';
 import WorkspaceSection from './WorkspaceSection';
 import WorkspaceSectionNew from './WorkspaceSectionNew';
@@ -22,10 +23,14 @@ type OwnProps = {
   workspace: ApiWorkspace;
 };
 
-const Workspace: FC<OwnProps> = ({
+type StateProps = {
+  selectedItemId?: string;
+};
+
+const Workspace: FC<OwnProps & StateProps> = ({
   workspace,
+  selectedItemId,
 }) => {
-  const { loadWebContentsViewUrl } = getActions();
   const [activeEntity, setActiveEntity] = useState<ActiveEntity | undefined>(undefined);
   const [activeEntityType, setActiveEntityType] = useState<ActiveEntityType | undefined>(undefined);
 
@@ -41,12 +46,6 @@ const Workspace: FC<OwnProps> = ({
       setActiveEntity(entity);
       setActiveEntityType(entityType);
     }, []);
-
-  const handleOpenWebContentsView = (url: string) => {
-    loadWebContentsViewUrl({
-      url,
-    });
-  };
 
   useEffect(() => {
     // refresh active entity on workspace update, should refactor somehow
@@ -107,11 +106,10 @@ const Workspace: FC<OwnProps> = ({
           />
         )}
       </div>
-      <div onClick={() => handleOpenWebContentsView('https://notion.so')}>Notion tasks</div>
-      <div onClick={() => handleOpenWebContentsView('https://www.notion.so/new')}>New Notion note</div>
-      <div onClick={() => handleOpenWebContentsView('https://figma.com')}>Figma main design</div>
-      <div onClick={() => handleOpenWebContentsView('https://meet.google.com/new')}>Create new Meet</div>
-      <div onClick={() => handleOpenWebContentsView('https://www.icloud.com/notes')}>Apple notes</div>
+      <WorkspaceLink url="https://notion.so" title="Notion" id="1" selected={selectedItemId === '1'} />
+      <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />
+      <WorkspaceLink url="https://figma.com" title="Figma" id="3" selected={selectedItemId === '3'} />
+      <WorkspaceLink url="https://figma.cum" title="Figma" id="4" selected={selectedItemId === '4'} />
       <WorkspaceRightSidebar
         activeEntity={activeEntity}
         activeEntityType={activeEntityType}
@@ -122,4 +120,10 @@ const Workspace: FC<OwnProps> = ({
   );
 };
 
-export default memo(Workspace);
+export default memo(withGlobal(
+  (global): StateProps => {
+    return {
+      selectedItemId: global.workspaces.selectedItemId,
+    };
+  },
+)(Workspace));
