@@ -82,9 +82,7 @@
     background-color: var(--background-color);
     outline: none !important;
     box-shadow: none !important;
-
-    transition: background-color 0.15s ease;
-
+    
     body.is-ios &,
     body.is-android & {
       border-radius: 0;
