@@ -26,6 +26,11 @@
   }
 }
 
+.ProfileSelectorContainer {
+  margin-top: auto;
+  margin-left: -1rem;
+}
+
 .ListItem {
   :global(.ListItem-button) {
     min-height: unset !important;
@@ -36,5 +41,6 @@
     padding: 0.25rem 0.5rem !important;
   }
 }
+
 
 

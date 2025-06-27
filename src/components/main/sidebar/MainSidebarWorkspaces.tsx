@@ -140,6 +140,7 @@ const MainSidebarWorkspaces: FC<OwnProps & StateProps> = ({
               leftIconName="lamp"
               onRenameCancel={handleCancelAddingNewSpace}
               onRenameFinish={handleAddNewWorkspace}
+              className={styles.newWorkspaceInput}
             />
           )}
         </Accordion>
