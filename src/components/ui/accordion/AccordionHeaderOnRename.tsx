@@ -42,7 +42,14 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
 
   return (
     <div className="AccordionHeaderOnRename">
-      {leftIconName && <Icon className={leftIconClassName} name={leftIconName} />}
+      {leftIconName && (
+        <div className="leftIconContainer">
+          <Icon
+            name={leftIconName}
+            className={leftIconClassName}
+          />
+        </div>
+      )}
       <input
         ref={inputRef}
         value={value}

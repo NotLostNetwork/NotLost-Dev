@@ -2,22 +2,23 @@ import type { FC } from '../../../../lib/teact/teact';
 import { memo, useCallback, useEffect, useState } from '../../../../lib/teact/teact';
 import { withGlobal } from '../../../../global';
 
-import type { ApiWorkspace, ApiWorkspaceFolder, ApiWorkspaceSection } from '../../../../api/notlost/types';
+import type { ApiWorkspace, ApiWorkspaceChatFolder } from '../../../../api/notlost/types';
 
 import buildClassName from '../../../../util/buildClassName';
 import { ChatAnimationTypes } from '../hooks';
 
 import Icon from '../../../common/icons/Icon';
 import Chat from '../Chat';
+import WorkspaceChatFolder from './WorkspaceChatFolder';
+import WorkspaceChatFolderNew from './WorkspaceChatFolderNew';
 import WorkspaceLink from './WorkspaceLink';
 import WorkspaceRightSidebar from './WorkspaceRightSidebar';
 import WorkspaceSection from './WorkspaceSection';
-import WorkspaceSectionNew from './WorkspaceSectionNew';
 
 import styles from './Workspace.module.scss';
 
-export type ActiveEntityType = 'workspace' | 'section' | 'folder';
-export type ActiveEntity = ApiWorkspace | ApiWorkspaceSection | ApiWorkspaceFolder;
+export type ActiveEntityType = 'workspace' | 'chatFolder';
+export type ActiveEntity = ApiWorkspace | ApiWorkspaceChatFolder;
 
 type OwnProps = {
   workspace: ApiWorkspace;
@@ -34,7 +35,7 @@ const Workspace: FC<OwnProps & StateProps> = ({
   const [activeEntity, setActiveEntity] = useState<ActiveEntity | undefined>(undefined);
   const [activeEntityType, setActiveEntityType] = useState<ActiveEntityType | undefined>(undefined);
 
-  const [isAddingNewSection, setIsAddingNewSection] = useState(false);
+  const [isAddingNewChatFolder, setIsAddingNewChatFolder] = useState(false);
 
   const handleUnselectEntityForChatsAdd = useCallback(() => {
     setActiveEntity(undefined);
@@ -53,9 +54,9 @@ const Workspace: FC<OwnProps & StateProps> = ({
 
     if (activeEntityType === 'workspace') {
       handleSetActiveEntity(workspace, 'workspace');
-    } else if (activeEntityType === 'section') {
-      const updatedSection = workspace.sections.find((s) => s.id === activeEntity.id)!;
-      handleSetActiveEntity(updatedSection, 'section');
+    } else if (activeEntityType === 'chatFolder') {
+      const updatedSection = workspace.chatFolders.find((f) => f.id === activeEntity.id)!;
+      handleSetActiveEntity(updatedSection, 'chatFolder');
     }
   }, [activeEntity, activeEntityType, handleSetActiveEntity, workspace]);
 
@@ -74,15 +75,20 @@ const Workspace: FC<OwnProps & StateProps> = ({
       <div className={headerClassName}>
         <div className={styles.headerTitle}>{workspace?.title}</div>
         <Icon
+          className={styles.addFolderButton}
+          name="folder"
+          onClick={() => setIsAddingNewChatFolder(true)}
+        />
+        <Icon
           className={styles.addSectionButton}
           name="add"
           onClick={() => handleSetActiveEntity(workspace, 'workspace')}
         />
       </div>
       <div className={styles.chats}>
-        {workspace?.chatIds.map((id) => (
+        {workspace?.chats.map((chat) => (
           <Chat
-            chatId={id}
+            chatId={chat.chatId}
             orderDiff={0}
             animationType={ChatAnimationTypes.Opacity}
             isStatic
@@ -90,31 +96,37 @@ const Workspace: FC<OwnProps & StateProps> = ({
           />
         ))}
       </div>
-      <div className={styles.sections}>
-        {workspace.sections.map((section) => (
-          <WorkspaceSection
-            section={section}
-            isHighlighted={activeEntity?.id === section.id}
-            selectForAddingChats={() => handleSetActiveEntity(section, 'section')}
-          />
-        ))}
-        {isAddingNewSection && (
-          <WorkspaceSectionNew
+      <WorkspaceSection sectionTitle="Folders">
+        {isAddingNewChatFolder && (
+          <WorkspaceChatFolderNew
             workspaceId={workspace.id}
-            onCreationCancel={() => setIsAddingNewSection(false)}
-            onCreationFinish={(section) => handleSetActiveEntity(section, 'section')}
+            onCreationFinishOrCancel={() => setIsAddingNewChatFolder(false)}
           />
         )}
-      </div>
-      <WorkspaceLink url="https://notion.so" title="Notion" id="1" selected={selectedItemId === '1'} />
-      <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />
-      <WorkspaceLink url="https://figma.com" title="Figma" id="3" selected={selectedItemId === '3'} />
-      <WorkspaceLink url="https://figma.cum" title="Figma" id="4" selected={selectedItemId === '4'} />
+        {workspace.chatFolders.map((chatFolder) => (
+          <WorkspaceChatFolder
+            key={chatFolder.id}
+            chatFolder={chatFolder}
+            isHighlighted={activeEntity?.id === chatFolder.id}
+            selectForAddingChats={() => handleSetActiveEntity(chatFolder, 'chatFolder')}
+          />
+        ))}
+      </WorkspaceSection>
+      <WorkspaceSection sectionTitle="Links">
+        <WorkspaceLink url="https://chatgpt.com/" title="Chat GPT" id="1" selected={selectedItemId === '1'} />
+        <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />
+        <WorkspaceLink url="https://figma.com" title="Figma" id="3" selected={selectedItemId === '3'} />
+        <WorkspaceLink url="https://figma.cum" title="Figma" id="4" selected={selectedItemId === '4'} />
+      </WorkspaceSection>
+      {/* <WorkspaceSection sectionTitle="Notes">
+        <WorkspaceNote url="https://notion.so" title="Meet notes" id="5" selected={selectedItemId === '5'} />
+        <WorkspaceNote url="https://www.notion.so/new" title="Todo tomorrow" id="6" selected={selectedItemId === '6'} />
+      </WorkspaceSection> */}
       <WorkspaceRightSidebar
         activeEntity={activeEntity}
         activeEntityType={activeEntityType}
         onClose={handleUnselectEntityForChatsAdd}
-        handleStartAddingNewSection={() => setIsAddingNewSection(true)}
+        handleStartAddingNewSection={() => setIsAddingNewChatFolder(true)}
       />
     </div>
   );

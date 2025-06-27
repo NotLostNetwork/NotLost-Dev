@@ -21,6 +21,8 @@ type OwnProps = {
   onMoreClick?: NoneToVoidFunction;
   onRenameCancel?: NoneToVoidFunction;
   onRenameFinish?: (value: string) => void;
+  onMouseEnter?: NoneToVoidFunction;
+  onMouseLeave?: NoneToVoidFunction;
 };
 
 const AccordionHeader: FC<OwnProps> = ({
@@ -34,6 +36,8 @@ const AccordionHeader: FC<OwnProps> = ({
   onMoreClick,
   onRenameCancel,
   onRenameFinish,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   const handleAddClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -59,18 +63,23 @@ const AccordionHeader: FC<OwnProps> = ({
   const headerClassName = buildClassName(
     'AccordionHeader',
     isHighlighted && 'highlighted',
+    isRenaming && 'renaming',
   );
 
   return (
     <div
       className={headerClassName}
       onClick={toggleExpanded}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {leftIconName && (
-        <Icon
-          name={leftIconName}
-          className={buildClassName((leftIconName === 'down' && !isExpanded) && 'rotateDownIcon')}
-        />
+        <div className="leftIconContainer">
+          <Icon
+            name={leftIconName}
+            className={buildClassName((leftIconName === 'down' && !isExpanded) && 'rotateDownIcon')}
+          />
+        </div>
       )}
       {!leftIconName && !isExpanded && (
         <Icon

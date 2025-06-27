@@ -1,4 +1,4 @@
-import type { ApiWorkspaceSection } from '../../api/notlost/types';
+import type { ApiWorkspaceLink } from '../../api/notlost/types';
 import type {
   ApiAttachBot,
   ApiAttachment,
@@ -2690,40 +2690,43 @@ export interface ActionPayloads {
     workspaceId: string;
     chatIds: string[];
   };
+  updateWorkspaceLinks: {
+    workspaceId: string;
+    links: ApiWorkspaceLink[];
+  };
 
-  // Section
-  addNewSectionIntoWorkspace: {
+  // Chat folder
+  addChatFolderIntoWorkspace: {
     workspaceId: string;
     title: string;
-    callback?: (section: ApiWorkspaceSection) => void;
   };
-  deleteSectionFromWorkspace: {
-    sectionId: string;
+  deleteChatFolderFromWorkspace: {
+    chatFolderId: string;
   };
-  renameWorkspaceSection: {
-    sectionId: string;
+  renameChatFolderInWorkspace: {
+    chatFolderId: string;
     newTitle: string;
   };
-  updateSectionChats: {
-    sectionId: string;
+  updateChatFolderChats: {
+    chatFolderId: string;
     chatIds: string[];
   };
 
-  // Folder
-  addNewFolderIntoSection: {
-    sectionId: string;
+  // Link Folder
+  addLinkFolderIntoWorkspace: {
+    workspaceId: string;
     title: string;
   };
-  deleteFolderFromSection: {
-    folderId: string;
+  deleteLinkFolderFromWorkspace: {
+    linkFolderId: string;
   };
-  renameSectionFolder: {
-    folderId: string;
+  renameLinkFolderInWorkspace: {
+    linkFolderId: string;
     newTitle: string;
   };
-  updateFolderChats: {
-    folderId: string;
-    chatIds: string[];
+  updateLinkFolderLinks: {
+    linkFolderId: string;
+    links: ApiWorkspaceLink[];
   };
 
   persistExpandedState: {

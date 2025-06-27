@@ -6,29 +6,32 @@ export const NotLostLocalStorageKeys = {
 
 export type NotLostLocalStorageKey = keyof typeof NotLostLocalStorageKeys;
 
-export type ApiWorkspaceFolder = {
-  id: string;
-  title: string;
-  chatIds: string[];
-};
-
 export type ApiWorkspace = {
   id: string;
   title: string;
   iconName: IconName;
-  chatIds: string[];
-  sections: ApiWorkspaceSection[];
-};
-
-export type ApiWorkspaceSection = {
-  id: string;
-  title: string;
-  chatIds: string[];
-  folders: ApiWorkspaceFolder[];
+  chats: ApiWorkspaceChat[];
+  links: ApiWorkspaceLink[];
+  chatFolders: ApiWorkspaceChatFolder[];
+  linkFolders: ApiWorkspaceLinkFolder[];
 };
 
 export type ApiWorkspaceLink = {
   id: string;
   title: string;
   url: string;
+};
+export type ApiWorkspaceChat = {
+  chatId: string;
+};
+
+type BaseFolder = {
+  id: string;
+  title: string;
+};
+export type ApiWorkspaceChatFolder = BaseFolder & {
+  chats: ApiWorkspaceChat[];
+};
+export type ApiWorkspaceLinkFolder = BaseFolder & {
+  links: ApiWorkspaceLink[];
 };

@@ -16,7 +16,7 @@ type OwnProps = {
   selected: boolean;
 };
 
-const WorkspaceLink: FC<OwnProps> = ({
+const WorkspaceNote: FC<OwnProps> = ({
   id,
   url,
   title,
@@ -37,7 +37,6 @@ const WorkspaceLink: FC<OwnProps> = ({
 
   const listItemClassName = buildClassName(
     styles.customListItem,
-    styles.hover,
     selected && styles.selected,
   );
 
@@ -58,7 +57,7 @@ const WorkspaceLink: FC<OwnProps> = ({
           {faviconUrl
             ? <img src={faviconUrl} alt="favicon" />
             : (
-              <Icon name="link" />
+              <Icon name="document" />
             )}
         </div>
         <div className={styles.linkTitle}>{title}</div>
@@ -68,4 +67,4 @@ const WorkspaceLink: FC<OwnProps> = ({
   );
 };
 
-export default memo(WorkspaceLink);
+export default memo(WorkspaceNote);

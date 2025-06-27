@@ -30,6 +30,8 @@ type OwnProps = {
   onRenameFinish?: (newTitle: string) => void;
   onRenameCancel?: NoneToVoidFunction;
   className?: string;
+  onHeaderMouseEnter?: NoneToVoidFunction;
+  onHeaderMouseLeave?: NoneToVoidFunction;
 };
 
 const Accordion: FC<OwnProps> = ({
@@ -48,6 +50,8 @@ const Accordion: FC<OwnProps> = ({
   onRenameFinish,
   onRenameCancel,
   className,
+  onHeaderMouseEnter,
+  onHeaderMouseLeave,
 }) => {
   const [isExpanded, setIsExpanded] = useState(isExpandedByDefault);
 
@@ -77,19 +81,31 @@ const Accordion: FC<OwnProps> = ({
           />
         ))}
         {children}
+        {chatIds?.length === 0 && !children && (
+          <div className="placeholder">
+            No items in
+            {' '}
+            {title}
+          </div>
+        )}
       </div>
     );
   };
 
+  const accordionClassName = buildClassName(
+    'Accordion',
+    className,
+  );
+
   return (
-    <ListItem
-      isStatic
-      withPortalForMenu
-      contextActions={contextActions}
-      onClick={() => {}}
-      className={className}
-    >
-      <div className="Accordion">
+
+    <div className={accordionClassName}>
+      <ListItem
+        isStatic
+        withPortalForMenu
+        contextActions={contextActions}
+        onClick={() => {}}
+      >
         <AccordionHeader
           title={title}
           leftIconName={leftIconName}
@@ -101,10 +117,12 @@ const Accordion: FC<OwnProps> = ({
           onMoreClick={onMoreClick}
           onRenameCancel={onRenameCancel}
           onRenameFinish={onRenameFinish}
+          onMouseEnter={() => onHeaderMouseEnter?.()}
+          onMouseLeave={() => onHeaderMouseLeave?.()}
         />
-        {isExpanded && renderInner()}
-      </div>
-    </ListItem>
+      </ListItem>
+      {isExpanded && renderInner()}
+    </div>
   );
 };
 

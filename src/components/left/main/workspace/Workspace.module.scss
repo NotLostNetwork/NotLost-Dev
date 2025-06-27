@@ -12,12 +12,30 @@
   margin-bottom: 0.5rem;
   border-radius: var(--border-radius-default-tiny);
 
+  &:hover {
+    .addFolderButton {
+      opacity: 1;
+    }
+  }
+
   .headerTitle {
     font-size: 12px;
   }
 
-  .addSectionButton {
+  .addFolderButton {
+    opacity: 0;
     margin-left: auto;
+    margin-right: 0.25rem;
+    padding: 0.25rem;
+    border-radius: var(--border-radius-default-tiny);
+    transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out;;
+
+    &:hover {
+      background-color: var(--color-chat-hover);
+    }
+  }
+
+  .addSectionButton {
     padding: 0.25rem;
     border-radius: var(--border-radius-default-tiny);
     transition: background-color 0.15s ease-in-out;
@@ -42,6 +60,7 @@
 }
 
 .Chats {
+  padding-left: 0.5rem;
   > * + * {
     margin-top: 1px;
   }
@@ -85,7 +104,7 @@
 
 .LinkIconContainer {
   height: 2rem;
-  width: 2rem;
+  min-width: 2rem;
   display: grid;
   place-content: center;
   border-radius: var(--border-radius-forum-avatar);
@@ -100,8 +119,30 @@
     transition: all 0.15s ease-in-out;
   }
 
+  i {
+    color: var(--color-links)
+  }
+
   &.withFavicon {
     background-color: var(--color-chat-hover);
+  }
+}
+
+.WorkspaceChatFolder {
+  :global(.AccordionHeader) {
+    padding: 0.25rem;
+    height: auto;
+  }
+
+  :global(.AccordionHeader .title) {
+    color: var(--color-text);
+    font-size: 0.875rem !important;
+  }
+
+  .new {
+    i {
+      padding: 1rem;
+    }
   }
 }
 
@@ -109,10 +150,6 @@
   :global(.ListItem-button) {
     padding: 0;
     min-height: 0;
-
-    &:hover {
-      background-color: var(--color-chat-hover);
-    }
   }
 
   &.selected {
@@ -136,5 +173,13 @@
         background-color: transparent;
       }
     }
+  }
+}
+
+.Hover {
+  transition: background-color 0.15s ease;
+  border-radius: var(--border-radius-default-tiny);
+  &:hover {
+    background-color: var(--color-chat-hover);
   }
 }

@@ -1,4 +1,4 @@
-import type { ApiWorkspace, ApiWorkspaceFolder, ApiWorkspaceSection } from '../../../api/notlost/types';
+import type { ApiWorkspace, ApiWorkspaceChatFolder, ApiWorkspaceLinkFolder } from '../../../api/notlost/types';
 import type { ActionReturnType } from '../../types';
 
 import ApiWorkspaceLayer from '../../../api/notlost/workspace';
@@ -6,23 +6,15 @@ import { addActionHandler, getGlobal, setGlobal } from '../..';
 
 // Helpers
 
-const findWorkspaceBySectionId = (workspaces: ApiWorkspace[], sectionId: string): ApiWorkspace | undefined => {
+const findWorkspaceByChatFolderId = (workspaces: ApiWorkspace[], chatFolderId: string): ApiWorkspace | undefined => {
   return workspaces.find((w) =>
-    w.sections.some((s) => s.id === sectionId),
+    w.chatFolders.some((f) => f.id === chatFolderId),
   ) || undefined;
 };
 
-const findWorkspaceByFolderId = (workspaces: ApiWorkspace[], folderId: string): ApiWorkspace | undefined => {
+const findWorkspaceByLinkFolderId = (workspaces: ApiWorkspace[], linkFolderId: string): ApiWorkspace | undefined => {
   return workspaces.find((w) =>
-    w.sections.some((s) =>
-      s.folders.some((f) => f.id === folderId),
-    ),
-  );
-};
-
-const findSectionByFolderId = (sections: ApiWorkspaceSection[], folderId: string): ApiWorkspaceSection | undefined => {
-  return sections.find((s) =>
-    s.folders.some((f) => f.id === folderId),
+    w.linkFolders.some((f) => f.id === linkFolderId),
   ) || undefined;
 };
 
@@ -54,8 +46,10 @@ addActionHandler('addNewWorkspace', (global, actions, payload): ActionReturnType
     id: crypto.randomUUID(),
     title,
     iconName,
-    chatIds: [],
-    sections: [],
+    chats: [],
+    links: [],
+    chatFolders: [],
+    linkFolders: [],
   };
 
   ApiWorkspaceLayer.addWorkspace(newWorkspace);
@@ -115,6 +109,8 @@ addActionHandler('renameWorkspace', (global, actions, payload): ActionReturnType
 addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionReturnType => {
   const { workspaceId, chatIds } = payload;
 
+  const updatedChats = chatIds.map((chatId) => ({ chatId }));
+
   ApiWorkspaceLayer.updateWorkspaceChats(workspaceId, chatIds);
 
   global = {
@@ -125,7 +121,7 @@ addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionRetur
         if (w.id === workspaceId) {
           return {
             ...w,
-            chatIds,
+            chats: updatedChats,
           };
         }
 
@@ -137,17 +133,41 @@ addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionRetur
   setGlobal(global);
 });
 
-// Section
+addActionHandler('updateWorkspaceLinks', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, links } = payload;
 
-addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): ActionReturnType => {
-  const { title, workspaceId, callback } = payload;
+  ApiWorkspaceLayer.updateWorkspaceLinks(workspaceId, links);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => {
+        if (w.id === workspaceId) {
+          return {
+            ...w,
+            links,
+          };
+        }
+
+        return w;
+      }),
+    },
+  };
+
+  setGlobal(global);
+});
+
+// Chat folder
+
+addActionHandler('addChatFolderIntoWorkspace', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, title } = payload;
   const id = crypto.randomUUID();
 
-  const newSection: ApiWorkspaceSection = {
+  const newChatFolder: ApiWorkspaceChatFolder = {
     id,
     title,
-    chatIds: [],
-    folders: [],
+    chats: [],
   };
 
   const workspace = global.workspaces.byOrder.find((w) => w.id === workspaceId);
@@ -155,11 +175,11 @@ addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): Actio
     return;
   }
 
-  ApiWorkspaceLayer.addSection(workspaceId, newSection);
+  ApiWorkspaceLayer.addChatFolder(workspaceId, newChatFolder);
 
   const updatedWorkspace: ApiWorkspace = {
     ...workspace,
-    sections: [...(workspace.sections || []), newSection],
+    chatFolders: [...(workspace.chatFolders || []), newChatFolder],
   };
 
   global = {
@@ -171,21 +191,19 @@ addActionHandler('addNewSectionIntoWorkspace', (global, actions, payload): Actio
   };
 
   setGlobal(global);
-
-  callback?.(newSection);
 });
 
-addActionHandler('deleteSectionFromWorkspace', (global, actions, payload): ActionReturnType => {
-  const { sectionId } = payload;
+addActionHandler('deleteChatFolderFromWorkspace', (global, actions, payload): ActionReturnType => {
+  const { chatFolderId } = payload;
 
-  ApiWorkspaceLayer.deleteSection(sectionId);
+  ApiWorkspaceLayer.deleteChatFolder(chatFolderId);
 
-  const workspace = findWorkspaceBySectionId(global.workspaces.byOrder, sectionId);
+  const workspace = findWorkspaceByChatFolderId(global.workspaces.byOrder, chatFolderId);
   if (!workspace) return;
 
   const updatedWorkspace: ApiWorkspace = {
     ...workspace,
-    sections: (workspace.sections ?? []).filter((s) => s.id !== sectionId),
+    chatFolders: (workspace.chatFolders ?? []).filter((f) => f.id !== chatFolderId),
   };
 
   global = {
@@ -199,12 +217,12 @@ addActionHandler('deleteSectionFromWorkspace', (global, actions, payload): Actio
   setGlobal(global);
 });
 
-addActionHandler('renameWorkspaceSection', (global, actions, payload): ActionReturnType => {
-  const { sectionId, newTitle } = payload;
+addActionHandler('renameChatFolderInWorkspace', (global, actions, payload): ActionReturnType => {
+  const { chatFolderId, newTitle } = payload;
 
-  ApiWorkspaceLayer.renameSection(sectionId, newTitle);
+  ApiWorkspaceLayer.renameChatFolder(chatFolderId, newTitle);
 
-  const workspace = findWorkspaceBySectionId(global.workspaces.byOrder, sectionId);
+  const workspace = findWorkspaceByChatFolderId(global.workspaces.byOrder, chatFolderId);
   if (!workspace) return;
 
   global = {
@@ -215,11 +233,11 @@ addActionHandler('renameWorkspaceSection', (global, actions, payload): ActionRet
         if (w.id === workspace.id) {
           return {
             ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === sectionId) {
-                return { ...s, title: newTitle };
+            chatFolders: w.chatFolders.map((f) => {
+              if (f.id === chatFolderId) {
+                return { ...f, title: newTitle };
               }
-              return s;
+              return f;
             }),
           };
         }
@@ -232,13 +250,15 @@ addActionHandler('renameWorkspaceSection', (global, actions, payload): ActionRet
   setGlobal(global);
 });
 
-addActionHandler('updateSectionChats', (global, actions, payload): ActionReturnType => {
-  const { sectionId, chatIds } = payload;
+addActionHandler('updateChatFolderChats', (global, actions, payload): ActionReturnType => {
+  const { chatFolderId, chatIds } = payload;
 
-  ApiWorkspaceLayer.updateSectionChats(sectionId, chatIds);
+  ApiWorkspaceLayer.updateChatFolderChats(chatFolderId, chatIds);
 
-  const workspace = findWorkspaceBySectionId(global.workspaces.byOrder, sectionId);
+  const workspace = findWorkspaceByChatFolderId(global.workspaces.byOrder, chatFolderId);
   if (!workspace) return;
+
+  const updatedChats = chatIds.map((chatId) => ({ chatId }));
 
   global = {
     ...global,
@@ -248,11 +268,11 @@ addActionHandler('updateSectionChats', (global, actions, payload): ActionReturnT
         if (w.id === workspace.id) {
           return {
             ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === sectionId) {
-                return { ...s, chatIds };
+            chatFolders: w.chatFolders.map((f) => {
+              if (f.id === chatFolderId) {
+                return { ...f, chats: updatedChats };
               }
-              return s;
+              return f;
             }),
           };
         }
@@ -265,18 +285,66 @@ addActionHandler('updateSectionChats', (global, actions, payload): ActionReturnT
   setGlobal(global);
 });
 
-addActionHandler('addNewFolderIntoSection', (global, actions, payload): ActionReturnType => {
-  const { sectionId, title } = payload;
+addActionHandler('addLinkFolderIntoWorkspace', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, title } = payload;
 
-  const newFolder: ApiWorkspaceFolder = {
+  const newLinkFolder: ApiWorkspaceLinkFolder = {
     id: crypto.randomUUID(),
     title,
-    chatIds: [],
+    links: [],
   };
 
-  ApiWorkspaceLayer.addFolder(sectionId, newFolder);
+  ApiWorkspaceLayer.addLinkFolder(workspaceId, newLinkFolder);
 
-  const workspace = findWorkspaceBySectionId(global.workspaces.byOrder, sectionId);
+  const workspace = global.workspaces.byOrder.find((w) => w.id === workspaceId);
+  if (!workspace) return;
+
+  const updatedWorkspace: ApiWorkspace = {
+    ...workspace,
+    linkFolders: [...(workspace.linkFolders || []), newLinkFolder],
+  };
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => (w.id === workspaceId ? updatedWorkspace : w)),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('deleteLinkFolderFromWorkspace', (global, actions, payload): ActionReturnType => {
+  const { linkFolderId } = payload;
+
+  ApiWorkspaceLayer.deleteLinkFolder(linkFolderId);
+
+  const workspace = findWorkspaceByLinkFolderId(global.workspaces.byOrder, linkFolderId);
+  if (!workspace) return;
+
+  const updatedWorkspace: ApiWorkspace = {
+    ...workspace,
+    linkFolders: (workspace.linkFolders ?? []).filter((f) => f.id !== linkFolderId),
+  };
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => (w.id === workspace.id ? updatedWorkspace : w)),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('renameLinkFolderInWorkspace', (global, actions, payload): ActionReturnType => {
+  const { linkFolderId, newTitle } = payload;
+
+  ApiWorkspaceLayer.renameLinkFolder(linkFolderId, newTitle);
+
+  const workspace = findWorkspaceByLinkFolderId(global.workspaces.byOrder, linkFolderId);
   if (!workspace) return;
 
   global = {
@@ -287,11 +355,11 @@ addActionHandler('addNewFolderIntoSection', (global, actions, payload): ActionRe
         if (w.id === workspace.id) {
           return {
             ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === sectionId) {
-                return { ...s, folders: [...s.folders, newFolder] };
+            linkFolders: w.linkFolders.map((f) => {
+              if (f.id === linkFolderId) {
+                return { ...f, title: newTitle };
               }
-              return s;
+              return f;
             }),
           };
         }
@@ -304,16 +372,13 @@ addActionHandler('addNewFolderIntoSection', (global, actions, payload): ActionRe
   setGlobal(global);
 });
 
-addActionHandler('deleteFolderFromSection', (global, actions, payload): ActionReturnType => {
-  const { folderId } = payload;
+addActionHandler('updateLinkFolderLinks', (global, actions, payload): ActionReturnType => {
+  const { linkFolderId, links } = payload;
 
-  ApiWorkspaceLayer.deleteFolder(folderId);
+  ApiWorkspaceLayer.updateLinkFolderLinks(linkFolderId, links);
 
-  const workspace = findWorkspaceByFolderId(global.workspaces.byOrder, folderId);
+  const workspace = findWorkspaceByLinkFolderId(global.workspaces.byOrder, linkFolderId);
   if (!workspace) return;
-
-  const section = findSectionByFolderId(workspace.sections, folderId);
-  if (!section) return;
 
   global = {
     ...global,
@@ -323,83 +388,11 @@ addActionHandler('deleteFolderFromSection', (global, actions, payload): ActionRe
         if (w.id === workspace.id) {
           return {
             ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === section.id) {
-                return { ...s, folders: s.folders.filter((f) => f.id !== folderId) };
+            linkFolders: w.linkFolders.map((f) => {
+              if (f.id === linkFolderId) {
+                return { ...f, links };
               }
-              return s;
-            }),
-          };
-        }
-
-        return w;
-      }),
-    },
-  };
-
-  setGlobal(global);
-});
-
-addActionHandler('renameSectionFolder', (global, actions, payload): ActionReturnType => {
-  const { folderId, newTitle } = payload;
-
-  ApiWorkspaceLayer.renameFolder(folderId, newTitle);
-
-  const workspace = findWorkspaceByFolderId(global.workspaces.byOrder, folderId);
-  if (!workspace) return;
-
-  const section = findSectionByFolderId(workspace.sections, folderId);
-  if (!section) return;
-
-  global = {
-    ...global,
-    workspaces: {
-      ...global.workspaces,
-      byOrder: global.workspaces.byOrder.map((w) => {
-        if (w.id === workspace.id) {
-          return {
-            ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === section.id) {
-                return { ...s, title: newTitle };
-              }
-              return s;
-            }),
-          };
-        }
-
-        return w;
-      }),
-    },
-  };
-
-  setGlobal(global);
-});
-
-addActionHandler('updateFolderChats', (global, actions, payload): ActionReturnType => {
-  const { folderId, chatIds } = payload;
-
-  ApiWorkspaceLayer.updateFolderChats(folderId, chatIds);
-
-  const workspace = findWorkspaceByFolderId(global.workspaces.byOrder, folderId);
-  if (!workspace) return;
-
-  const section = findSectionByFolderId(workspace.sections, folderId);
-  if (!section) return;
-
-  global = {
-    ...global,
-    workspaces: {
-      ...global.workspaces,
-      byOrder: global.workspaces.byOrder.map((w) => {
-        if (w.id === workspace.id) {
-          return {
-            ...w,
-            sections: w.sections.map((s) => {
-              if (s.id === section.id) {
-                return { ...s, chatIds };
-              }
-              return s;
+              return f;
             }),
           };
         }
