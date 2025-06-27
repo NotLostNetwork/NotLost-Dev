@@ -97,7 +97,11 @@ const Workspace: FC<OwnProps & StateProps> = ({
         ))}
       </div>
       {workspace.chatFolders.length > 0 && (
-        <WorkspaceSection sectionTitle="Folders" onAddClick={() => setIsAddingNewChatFolder(true)}>
+        <WorkspaceSection
+          workspaceId={workspace.id}
+          sectionTitle="Folders"
+          onAddClick={() => setIsAddingNewChatFolder(true)}
+        >
           {isAddingNewChatFolder && (
             <WorkspaceChatFolderNew
               workspaceId={workspace.id}
@@ -114,7 +118,10 @@ const Workspace: FC<OwnProps & StateProps> = ({
           ))}
         </WorkspaceSection>
       )}
-      <WorkspaceSection sectionTitle="Links">
+      <WorkspaceSection
+        workspaceId={workspace.id}
+        sectionTitle="Links"
+      >
         <WorkspaceLink url="https://chatgpt.com/" title="Chat GPT" id="1" selected={selectedItemId === '1'} />
         <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />
         <WorkspaceLink url="https://figma.com" title="Figma" id="3" selected={selectedItemId === '3'} />

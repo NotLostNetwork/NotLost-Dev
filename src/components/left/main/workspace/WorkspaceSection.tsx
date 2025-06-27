@@ -7,18 +7,20 @@ import AccordionSavedState from '../../../ui/accordion/AccordionSavedState';
 import styles from './WorkspaceSection.module.scss';
 
 type OwnProps = {
+  workspaceId: string;
   sectionTitle: string;
   children: TeactNode;
   onAddClick?: NoneToVoidFunction;
 };
 
 const WorkspaceSection: FC<OwnProps> = ({
+  workspaceId,
   sectionTitle,
   children,
   onAddClick,
 },
 ) => {
-  const id = `accordion-saved-state-${sectionTitle}`;
+  const id = `accordion-saved-state-${workspaceId}-${sectionTitle}`;
   return (
     <AccordionSavedState id={id}>
       {({ isExpandedByDefault, onChange }) => (
