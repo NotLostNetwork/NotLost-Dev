@@ -72,7 +72,10 @@ const WorkspaceChatFolder: FC<OwnProps> = ({
 
   return (
 
-    <AccordionSavedState id={chatFolder.id}>
+    <AccordionSavedState
+      id={chatFolder.id}
+      isInitiallyExpanded={false}
+    >
       {({ isExpandedByDefault, onChange }) => (
         <Accordion
           key={chatFolder.id}

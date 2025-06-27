@@ -96,22 +96,24 @@ const Workspace: FC<OwnProps & StateProps> = ({
           />
         ))}
       </div>
-      <WorkspaceSection sectionTitle="Folders">
-        {isAddingNewChatFolder && (
-          <WorkspaceChatFolderNew
-            workspaceId={workspace.id}
-            onCreationFinishOrCancel={() => setIsAddingNewChatFolder(false)}
-          />
-        )}
-        {workspace.chatFolders.map((chatFolder) => (
-          <WorkspaceChatFolder
-            key={chatFolder.id}
-            chatFolder={chatFolder}
-            isHighlighted={activeEntity?.id === chatFolder.id}
-            selectForAddingChats={() => handleSetActiveEntity(chatFolder, 'chatFolder')}
-          />
-        ))}
-      </WorkspaceSection>
+      {workspace.chatFolders.length > 0 && (
+        <WorkspaceSection sectionTitle="Folders" onAddClick={() => setIsAddingNewChatFolder(true)}>
+          {isAddingNewChatFolder && (
+            <WorkspaceChatFolderNew
+              workspaceId={workspace.id}
+              onCreationFinishOrCancel={() => setIsAddingNewChatFolder(false)}
+            />
+          )}
+          {workspace.chatFolders.map((chatFolder) => (
+            <WorkspaceChatFolder
+              key={chatFolder.id}
+              chatFolder={chatFolder}
+              isHighlighted={activeEntity?.id === chatFolder.id}
+              selectForAddingChats={() => handleSetActiveEntity(chatFolder, 'chatFolder')}
+            />
+          ))}
+        </WorkspaceSection>
+      )}
       <WorkspaceSection sectionTitle="Links">
         <WorkspaceLink url="https://chatgpt.com/" title="Chat GPT" id="1" selected={selectedItemId === '1'} />
         <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />

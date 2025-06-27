@@ -9,11 +9,13 @@ import styles from './WorkspaceSection.module.scss';
 type OwnProps = {
   sectionTitle: string;
   children: TeactNode;
+  onAddClick?: NoneToVoidFunction;
 };
 
 const WorkspaceSection: FC<OwnProps> = ({
   sectionTitle,
   children,
+  onAddClick,
 },
 ) => {
   const id = `accordion-saved-state-${sectionTitle}`;
@@ -22,6 +24,7 @@ const WorkspaceSection: FC<OwnProps> = ({
       {({ isExpandedByDefault, onChange }) => (
         <Accordion
           key={id}
+          onAddClick={onAddClick}
           title={sectionTitle}
           isExpandedByDefault={isExpandedByDefault}
           onChange={onChange}
