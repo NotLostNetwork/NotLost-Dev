@@ -1,4 +1,4 @@
-import { app, nativeImage, WebContentsView } from 'electron';
+import { app, nativeImage } from 'electron';
 import contextMenu from 'electron-context-menu';
 import path from 'path';
 
@@ -20,11 +20,7 @@ contextMenu({
   showInspectElement: !IS_PRODUCTION,
 });
 
-export let webContentsView: WebContentsView;
-
 app.on('ready', () => {
-  webContentsView = new WebContentsView();
-
   if (IS_MAC_OS) {
     app.dock!.setIcon(nativeImage.createFromPath(path.resolve(__dirname, '../public/icon-electron-macos.png')));
   }

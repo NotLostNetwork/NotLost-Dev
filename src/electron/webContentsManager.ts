@@ -1,5 +1,6 @@
 import type { BrowserWindow } from 'electron';
-import { WebContentsView } from 'electron';
+import { desktopCapturer, WebContentsView } from 'electron';
+import path from 'path';
 
 import type { WebContentsViewBounds } from '../types/electron';
 
@@ -43,7 +44,21 @@ export class WebContentsManager {
         });
       }
 
-      const newView = new WebContentsView();
+      const newView = new WebContentsView({
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: false,
+          preload: path.join(__dirname, 'preload.js'),
+        },
+      });
+
+      const session = newView.webContents.session;
+      session.setDisplayMediaRequestHandler((_, callback) => {
+        desktopCapturer.getSources({ types: ['screen'] }).then((sources) => {
+          callback({ video: sources[0] });
+        });
+      });
+
       newView.setBounds(this.bounds);
       newView.webContents.loadURL(url);
 
