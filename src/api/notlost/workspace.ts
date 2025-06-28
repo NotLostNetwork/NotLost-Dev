@@ -14,6 +14,10 @@ class ApiWorkspaceLayer {
     return workspace.linkFolders.findIndex((f) => f.id === linkFolderId);
   }
 
+  private findLinkIndex(workspace: ApiWorkspace, linkId: string) {
+    return workspace.links.findIndex((l) => l.id === linkId);
+  }
+
   // Workspace
 
   getWorkspaces = async (): Promise<ApiWorkspace[]> => {
@@ -65,18 +69,36 @@ class ApiWorkspaceLayer {
     );
   };
 
-  updateWorkspaceLinks = async (workspaceId: string, links: ApiWorkspaceLink[]): Promise<void> => {
+  addLinkIntoWorkspace = async (workspaceId: string, newLink: ApiWorkspaceLink): Promise<void> => {
     await this.store.update<ApiWorkspace[]>(
       NotLostLocalStorageKeys.workspaces,
       (old = []) => old.map((workspace) => {
         if (workspace.id === workspaceId) {
+          const links = workspace.links ?? [];
           return {
             ...workspace,
-            links,
+            links: [...links, newLink],
           };
         }
         return workspace;
       }),
+    );
+  };
+
+  deleteLink = async (linkId: string): Promise<void> => {
+    await this.store.update<ApiWorkspace[]>(
+      NotLostLocalStorageKeys.workspaces,
+      (old = []) =>
+        old.map((workspace) => {
+          const linkIndex = this.findLinkIndex(workspace, linkId);
+
+          if (linkIndex === -1) return workspace;
+
+          return {
+            ...workspace,
+            links: workspace.links.filter((l) => l.id !== linkId),
+          };
+        }),
     );
   };
 

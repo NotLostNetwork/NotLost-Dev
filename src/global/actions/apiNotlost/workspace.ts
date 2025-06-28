@@ -1,4 +1,9 @@
-import type { ApiWorkspace, ApiWorkspaceChatFolder, ApiWorkspaceLinkFolder } from '../../../api/notlost/types';
+import type {
+  ApiWorkspace,
+  ApiWorkspaceChatFolder,
+  ApiWorkspaceLink,
+  ApiWorkspaceLinkFolder,
+} from '../../../api/notlost/types';
 import type { ActionReturnType } from '../../types';
 
 import ApiWorkspaceLayer from '../../../api/notlost/workspace';
@@ -15,6 +20,12 @@ const findWorkspaceByChatFolderId = (workspaces: ApiWorkspace[], chatFolderId: s
 const findWorkspaceByLinkFolderId = (workspaces: ApiWorkspace[], linkFolderId: string): ApiWorkspace | undefined => {
   return workspaces.find((w) =>
     w.linkFolders.some((f) => f.id === linkFolderId),
+  ) || undefined;
+};
+
+const findWorkspaceByLinkId = (workspaces: ApiWorkspace[], linkId: string): ApiWorkspace | undefined => {
+  return workspaces.find((w) =>
+    w.links.some((l) => l.id === linkId),
   ) || undefined;
 };
 
@@ -133,10 +144,16 @@ addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionRetur
   setGlobal(global);
 });
 
-addActionHandler('updateWorkspaceLinks', (global, actions, payload): ActionReturnType => {
-  const { workspaceId, links } = payload;
+addActionHandler('addLinkIntoWorkspace', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, title, url } = payload;
 
-  ApiWorkspaceLayer.updateWorkspaceLinks(workspaceId, links);
+  const newLink: ApiWorkspaceLink = {
+    id: crypto.randomUUID(),
+    title,
+    url,
+  };
+
+  ApiWorkspaceLayer.addLinkIntoWorkspace(workspaceId, newLink);
 
   global = {
     ...global,
@@ -146,12 +163,36 @@ addActionHandler('updateWorkspaceLinks', (global, actions, payload): ActionRetur
         if (w.id === workspaceId) {
           return {
             ...w,
-            links,
+            links: [...(w.links || []), newLink],
           };
         }
 
         return w;
       }),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('deleteLinkFromWorkspace', (global, actions, payload): ActionReturnType => {
+  const { linkId } = payload;
+
+  ApiWorkspaceLayer.deleteLink(linkId);
+
+  const workspace = findWorkspaceByLinkId(global.workspaces.byOrder, linkId);
+  if (!workspace) return;
+
+  const updatedWorkspace: ApiWorkspace = {
+    ...workspace,
+    links: (workspace.links ?? []).filter((l) => l.id !== linkId),
+  };
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => (w.id === workspace.id ? updatedWorkspace : w)),
     },
   };
 

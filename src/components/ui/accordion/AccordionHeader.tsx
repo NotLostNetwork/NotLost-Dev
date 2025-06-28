@@ -17,6 +17,7 @@ type OwnProps = {
   isHighlighted?: boolean;
   isRenaming?: boolean;
   toggleExpanded: NoneToVoidFunction;
+  placeholder?: string;
   onAddClick?: NoneToVoidFunction;
   onMoreClick?: NoneToVoidFunction;
   onRenameCancel?: NoneToVoidFunction;
@@ -32,6 +33,7 @@ const AccordionHeader: FC<OwnProps> = ({
   isHighlighted,
   leftIconName,
   toggleExpanded,
+  placeholder,
   onAddClick,
   onMoreClick,
   onRenameCancel,
@@ -54,6 +56,7 @@ const AccordionHeader: FC<OwnProps> = ({
       <AccordionHeaderOnRename
         leftIconName={leftIconName}
         title={title}
+        placeholder={placeholder}
         onRenameCancel={onRenameCancel}
         onRenameFinish={onRenameFinish}
       />

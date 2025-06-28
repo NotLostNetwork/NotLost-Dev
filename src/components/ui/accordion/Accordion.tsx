@@ -24,6 +24,7 @@ type OwnProps = {
   isRenaming?: boolean;
   withInnerPadding?: boolean;
   contextActions?: MenuItemContextAction[];
+  placeholder?: string;
   onChange?: (isExpanded: boolean) => void;
   onAddClick?: NoneToVoidFunction;
   onMoreClick?: NoneToVoidFunction;
@@ -44,6 +45,7 @@ const Accordion: FC<OwnProps> = ({
   leftIconName,
   contextActions,
   withInnerPadding,
+  placeholder,
   onChange,
   onAddClick,
   onMoreClick,
@@ -113,6 +115,7 @@ const Accordion: FC<OwnProps> = ({
           isExpanded={isExpanded}
           isRenaming={isRenaming}
           toggleExpanded={handleToggleExpanded}
+          placeholder={placeholder}
           onAddClick={onAddClick}
           onMoreClick={onMoreClick}
           onRenameCancel={onRenameCancel}

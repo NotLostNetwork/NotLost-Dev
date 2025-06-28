@@ -12,6 +12,7 @@ import Chat from '../Chat';
 import WorkspaceChatFolder from './WorkspaceChatFolder';
 import WorkspaceChatFolderNew from './WorkspaceChatFolderNew';
 import WorkspaceLink from './WorkspaceLink';
+import WorkspaceLinkNew from './WorkspaceLinkNew';
 import WorkspaceRightSidebar from './WorkspaceRightSidebar';
 import WorkspaceSection from './WorkspaceSection';
 
@@ -36,6 +37,7 @@ const Workspace: FC<OwnProps & StateProps> = ({
   const [activeEntityType, setActiveEntityType] = useState<ActiveEntityType | undefined>(undefined);
 
   const [isAddingNewChatFolder, setIsAddingNewChatFolder] = useState(false);
+  const [isAddingNewLink, setIsAddingNewLink] = useState(false);
 
   const handleUnselectEntityForChatsAdd = useCallback(() => {
     setActiveEntity(undefined);
@@ -74,16 +76,23 @@ const Workspace: FC<OwnProps & StateProps> = ({
     <div className={containerClassName}>
       <div className={headerClassName}>
         <div className={styles.headerTitle}>{workspace?.title}</div>
-        <Icon
-          className={styles.addFolderButton}
-          name="folder"
-          onClick={() => setIsAddingNewChatFolder(true)}
-        />
-        <Icon
-          className={styles.addSectionButton}
-          name="add"
-          onClick={() => handleSetActiveEntity(workspace, 'workspace')}
-        />
+        <div className={styles.headerButtons}>
+          <Icon
+            className={styles.addLinkButton}
+            name="link"
+            onClick={() => setIsAddingNewLink(true)}
+          />
+          <Icon
+            className={styles.addFolderButton}
+            name="folder"
+            onClick={() => setIsAddingNewChatFolder(true)}
+          />
+          <Icon
+            className={styles.addSectionButton}
+            name="add"
+            onClick={() => handleSetActiveEntity(workspace, 'workspace')}
+          />
+        </div>
       </div>
       <div className={styles.chats}>
         {workspace?.chats.map((chat) => (
@@ -96,18 +105,12 @@ const Workspace: FC<OwnProps & StateProps> = ({
           />
         ))}
       </div>
-      {workspace.chatFolders.length > 0 && (
+      {(workspace.chatFolders.length > 0 || isAddingNewChatFolder) && (
         <WorkspaceSection
           workspaceId={workspace.id}
           sectionTitle="Folders"
           onAddClick={() => setIsAddingNewChatFolder(true)}
         >
-          {isAddingNewChatFolder && (
-            <WorkspaceChatFolderNew
-              workspaceId={workspace.id}
-              onCreationFinishOrCancel={() => setIsAddingNewChatFolder(false)}
-            />
-          )}
           {workspace.chatFolders.map((chatFolder) => (
             <WorkspaceChatFolder
               key={chatFolder.id}
@@ -116,17 +119,38 @@ const Workspace: FC<OwnProps & StateProps> = ({
               selectForAddingChats={() => handleSetActiveEntity(chatFolder, 'chatFolder')}
             />
           ))}
+          {isAddingNewChatFolder && (
+            <WorkspaceChatFolderNew
+              workspaceId={workspace.id}
+              onCreationFinishOrCancel={() => setIsAddingNewChatFolder(false)}
+            />
+          )}
         </WorkspaceSection>
       )}
-      <WorkspaceSection
-        workspaceId={workspace.id}
-        sectionTitle="Links"
-      >
-        <WorkspaceLink url="https://chatgpt.com/" title="Chat GPT" id="1" selected={selectedItemId === '1'} />
-        <WorkspaceLink url="https://www.notion.so/new" title="New note" id="2" selected={selectedItemId === '2'} />
-        <WorkspaceLink url="https://figma.com" title="Figma" id="3" selected={selectedItemId === '3'} />
-        <WorkspaceLink url="https://figma.cum" title="Figma" id="4" selected={selectedItemId === '4'} />
-      </WorkspaceSection>
+      {(workspace.links.length > 0 || isAddingNewLink) && (
+        <WorkspaceSection
+          workspaceId={workspace.id}
+          sectionTitle="Links"
+          onAddClick={() => setIsAddingNewLink(true)}
+        >
+          {workspace.links.map((link) => (
+            <WorkspaceLink
+              key={link.id}
+              id={link.id}
+              url={link.url}
+              title={link.title}
+              selected={selectedItemId === link.id}
+            />
+          ))}
+          {isAddingNewLink && (
+            <WorkspaceLinkNew
+              workspaceId={workspace.id}
+              onCreationFinishOrCancel={() => setIsAddingNewLink(false)}
+            />
+          )}
+        </WorkspaceSection>
+      )}
+
       {/* <WorkspaceSection sectionTitle="Notes">
         <WorkspaceNote url="https://notion.so" title="Meet notes" id="5" selected={selectedItemId === '5'} />
         <WorkspaceNote url="https://www.notion.so/new" title="Todo tomorrow" id="6" selected={selectedItemId === '6'} />

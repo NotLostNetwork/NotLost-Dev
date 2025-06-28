@@ -1,8 +1,11 @@
 import type { FC } from '@teact';
-import { memo, useState } from '@teact';
+import { memo, useCallback, useMemo, useState } from '@teact';
 import { getActions } from '../../../../global';
 
+import type { MenuItemContextAction } from '../../../ui/ListItem';
+
 import buildClassName from '../../../../util/buildClassName';
+import { compact } from '../../../../util/iteratees';
 
 import Icon from '../../../common/icons/Icon';
 import ListItem from '../../../ui/ListItem';
@@ -22,7 +25,7 @@ const WorkspaceLink: FC<OwnProps> = ({
   title,
   selected,
 }) => {
-  const { setWorkspaceSelectedItemId, openChat } = getActions();
+  const { setWorkspaceSelectedItemId, openChat, deleteLinkFromWorkspace } = getActions();
 
   const [faviconUrl, setFaviconUrl] = useState('');
 
@@ -34,6 +37,31 @@ const WorkspaceLink: FC<OwnProps> = ({
       window.electron?.setWebContentsViewVisible(true);
     });
   };
+
+  const handleDelete = useCallback(() => {
+    deleteLinkFromWorkspace({
+      linkId: id,
+    });
+  }, [id]);
+
+  const contextActions = useMemo(() => {
+    /* const actionRename = {
+      title: 'Rename',
+      icon: 'edit',
+      handler: () => {
+        setIsRenaming(true);
+      },
+    } satisfies MenuItemContextAction; */
+
+    const actionDelete = {
+      title: 'Delete',
+      icon: 'delete',
+      destructive: true,
+      handler: handleDelete,
+    } satisfies MenuItemContextAction;
+
+    return compact([actionDelete]);
+  }, [handleDelete]);
 
   const listItemClassName = buildClassName(
     styles.customListItem,
@@ -50,8 +78,10 @@ const WorkspaceLink: FC<OwnProps> = ({
     <ListItem
       isStatic
       ripple
+      withPortalForMenu
       className={listItemClassName}
       onClick={handleClick}
+      contextActions={contextActions}
     >
       <div className={styles.link}>
         <div className={linkIconContainerClassName}>
@@ -64,7 +94,6 @@ const WorkspaceLink: FC<OwnProps> = ({
         <div className={styles.linkTitle}>{title}</div>
       </div>
     </ListItem>
-
   );
 };
 

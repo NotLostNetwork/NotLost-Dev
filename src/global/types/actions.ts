@@ -2690,9 +2690,13 @@ export interface ActionPayloads {
     workspaceId: string;
     chatIds: string[];
   };
-  updateWorkspaceLinks: {
+  addLinkIntoWorkspace: {
     workspaceId: string;
-    links: ApiWorkspaceLink[];
+    title: string;
+    url: string;
+  };
+  deleteLinkFromWorkspace: {
+    linkId: string;
   };
 
   // Chat folder

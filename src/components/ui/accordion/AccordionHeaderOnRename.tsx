@@ -14,6 +14,7 @@ import './Accordion.scss';
 type OwnProps = {
   leftIconName?: IconName;
   title?: string;
+  placeholder?: string;
   onRenameCancel?: NoneToVoidFunction;
   onRenameFinish?: (value: string) => void;
 };
@@ -21,6 +22,7 @@ type OwnProps = {
 const AccordionHeaderOnRename: FC<OwnProps> = ({
   leftIconName,
   title,
+  placeholder,
   onRenameCancel,
   onRenameFinish,
 }) => {
@@ -30,7 +32,10 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
 
   useEffect(() => {
     const releaseEscListener = captureEscKeyListener(() => onRenameCancel?.());
-    const releaseEnterListener = captureEnterKeyListener(() => onRenameFinish?.(value));
+    const releaseEnterListener = captureEnterKeyListener(() => {
+      onRenameFinish?.(value);
+      setValue('');
+    });
 
     return () => {
       releaseEscListener();
@@ -41,6 +46,10 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    setValue(title || '');
+  }, [title]);
 
   const leftIconClassName = buildClassName(
     'leftIcon',
@@ -60,6 +69,7 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
       <input
         ref={inputRef}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => setValue(e.currentTarget.value)}
         onBlur={onRenameCancel}
       />
