@@ -28,8 +28,15 @@ const AccordionHeaderOnRename: FC<OwnProps> = ({
 
   const [value, setValue] = useState(title || '');
 
-  captureEscKeyListener(() => onRenameCancel?.());
-  captureEnterKeyListener(() => onRenameFinish?.(value));
+  useEffect(() => {
+    const releaseEscListener = captureEscKeyListener(() => onRenameCancel?.());
+    const releaseEnterListener = captureEnterKeyListener(() => onRenameFinish?.(value));
+
+    return () => {
+      releaseEscListener();
+      releaseEnterListener();
+    };
+  }, [onRenameCancel, onRenameFinish, value]);
 
   useEffect(() => {
     inputRef.current?.focus();
