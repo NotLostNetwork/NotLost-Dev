@@ -166,8 +166,6 @@ const Chat: FC<OwnProps & StateProps> = ({
     focusLastMessage,
     focusMessage,
     loadTopics,
-    openForumPanel,
-    closeForumPanel,
     setShouldCloseRightColumn,
     reportMessages,
     openFrozenAccountModal,
@@ -231,7 +229,7 @@ const Chat: FC<OwnProps & StateProps> = ({
       return;
     }
 
-    if (isForum) {
+    /* if (isForum) {
       if (isForumPanelOpen) {
         closeForumPanel(undefined, { forceOnHeavyAnimation: true });
 
@@ -243,7 +241,7 @@ const Chat: FC<OwnProps & StateProps> = ({
 
         if (!isForumAsMessages) return;
       }
-    }
+    } */
 
     openChat({ id: chatId, noForumTopicPanel, shouldReplaceHistory: true }, { forceOnHeavyAnimation: true });
 
