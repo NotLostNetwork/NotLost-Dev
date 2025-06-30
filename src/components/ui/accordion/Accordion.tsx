@@ -69,7 +69,7 @@ const Accordion: FC<OwnProps> = ({
     return (
       <div className={innerClassName}>
         {children}
-        {!children && (
+        {(!children || (Array.isArray(children) && children.length === 0)) && (
           <div className="placeholder">
             No items in
             {' '}
