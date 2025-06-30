@@ -29,8 +29,7 @@
     background-color: var(--color-telegram-blue);
 
     i {
-      color: white !important;
-
+      color: white;
       &:hover {
         color: var(--color-telegram-blue);
         background-color: white;
@@ -43,6 +42,10 @@
 
     .leftIconContainer {
       background-color: transparent;
+
+      i {
+        color: white;
+      }
     }
   }
 
