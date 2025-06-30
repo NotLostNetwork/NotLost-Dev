@@ -1,6 +1,6 @@
 import type { FC } from '../../../../lib/teact/teact';
 import { memo, useCallback, useEffect, useState } from '../../../../lib/teact/teact';
-import { withGlobal } from '../../../../global';
+import { getActions, withGlobal } from '../../../../global';
 
 import type { ApiWorkspace, ApiWorkspaceChatFolder } from '../../../../api/notlost/types';
 
@@ -33,6 +33,8 @@ const Workspace: FC<OwnProps & StateProps> = ({
   workspace,
   selectedItemId,
 }) => {
+  const { setWorkspaceSidebarOpen } = getActions();
+
   const [activeEntity, setActiveEntity] = useState<ActiveEntity | undefined>(undefined);
   const [activeEntityType, setActiveEntityType] = useState<ActiveEntityType | undefined>(undefined);
 
@@ -42,12 +44,16 @@ const Workspace: FC<OwnProps & StateProps> = ({
   const handleUnselectEntityForChatsAdd = useCallback(() => {
     setActiveEntity(undefined);
     setActiveEntityType(undefined);
+
+    setWorkspaceSidebarOpen(false);
   }, []);
 
   const handleSetActiveEntity = useCallback(
     (entity: ActiveEntity, entityType: ActiveEntityType) => {
       setActiveEntity(entity);
       setActiveEntityType(entityType);
+
+      setWorkspaceSidebarOpen(true);
     }, []);
 
   useEffect(() => {
@@ -61,6 +67,11 @@ const Workspace: FC<OwnProps & StateProps> = ({
       handleSetActiveEntity(updatedSection, 'chatFolder');
     }
   }, [activeEntity, activeEntityType, handleSetActiveEntity, workspace]);
+
+  useEffect(() => {
+    // reset active entity when workspace changes
+    handleUnselectEntityForChatsAdd();
+  }, [handleUnselectEntityForChatsAdd, workspace]);
 
   const containerClassName = buildClassName(
     styles.container,

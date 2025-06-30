@@ -1,8 +1,7 @@
 import type {
   ElementRef } from '../../lib/teact/teact';
-import type React from '../../lib/teact/teact';
 import {
-  memo, useEffect, useMemo,
+  memo, useCallback, useEffect, useMemo,
   useRef,
   useState,
 } from '../../lib/teact/teact';
@@ -165,6 +164,7 @@ type StateProps = {
   paidMessagesStars?: number;
   isAccountFrozen?: boolean;
   freezeAppealChat?: ApiChat;
+  workspaceSidebarIsOpen?: boolean;
 };
 
 function isImage(item: DataTransferItem) {
@@ -228,6 +228,7 @@ function MiddleColumn({
   paidMessagesStars,
   isAccountFrozen,
   freezeAppealChat,
+  workspaceSidebarIsOpen,
 }: OwnProps & StateProps) {
   const {
     openChat,
@@ -498,14 +499,28 @@ function MiddleColumn({
   const withExtraShift = Boolean(isMessagingDisabled || isSelectModeActive);
 
   useResizeObserver(containerRef, (entry) => {
-    const rect = entry.target.getBoundingClientRect();
+    updateWebContentsViewBounds(entry.target.getBoundingClientRect());
+  });
+
+  const updateWebContentsViewBounds = useCallback((rect: DOMRect) => {
+    const workspaceSidebarWidth = 300;
+    const calcX = workspaceSidebarIsOpen ? rect.left + workspaceSidebarWidth + 1 : rect.left + 1; // 1px: include left column border
+    const calcWidth = workspaceSidebarIsOpen ? rect.width - workspaceSidebarWidth - 1 : rect.width - 1;
+
     window.electron?.setWebContentsViewBounds({
-      x: rect.left + 1, // include left column border
+      x: calcX,
       y: rect.top,
       height: window.innerHeight - 22, // bottom inset (padding + border)
-      width: rect.width - 1, // include right border
+      width: calcWidth,
     });
-  });
+  }, [workspaceSidebarIsOpen]);
+
+  useEffect(() => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      updateWebContentsViewBounds(rect);
+    }
+  }, [updateWebContentsViewBounds, workspaceSidebarIsOpen]);
 
   return (
     <div
@@ -780,6 +795,7 @@ export default memo(withGlobal<OwnProps>(
       currentTransitionKey: Math.max(0, messageLists.length - 1),
       activeEmojiInteractions,
       leftColumnWidth,
+      workspaceSidebarIsOpen: global.workspaces.sidebarIsOpen,
     };
 
     if (!currentMessageList) {

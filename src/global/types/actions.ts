@@ -2674,6 +2674,7 @@ export interface ActionPayloads {
   loadAllWorkspaces: undefined;
   setActiveWorkspaceId: string;
   setWorkspaceSelectedItemId: string | undefined;
+  setWorkspaceSidebarOpen: boolean;
 
   addNewWorkspace: {
     title: string;

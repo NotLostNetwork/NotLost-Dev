@@ -462,6 +462,7 @@ export type GlobalState = {
     byOrder: ApiWorkspace[];
     areLoaded: boolean;
     selectedItemId?: string;
+    sidebarIsOpen?: boolean;
   };
   expandedState: Record<string, boolean>;
 
