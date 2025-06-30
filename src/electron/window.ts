@@ -1,7 +1,7 @@
 import type { HandlerDetails } from 'electron';
 import {
-  app, BrowserWindow, ipcMain, shell, systemPreferences,
-} from 'electron';
+  app, BrowserWindow, ipcMain, screen,
+  shell, systemPreferences } from 'electron';
 import path from 'path';
 
 import type { WebContentsViewBounds, WindowButtonsPosition } from '../types/electron';
@@ -22,9 +22,11 @@ import windowStateKeeper from './windowState';
 const ALLOWED_DEVICE_ORIGINS = ['http://localhost:1234', 'file://'];
 
 export function createWindow(url?: string) {
+  const screenDimensions = screen.getPrimaryDisplay().workAreaSize;
+
   const windowState = windowStateKeeper({
-    defaultWidth: 1088,
-    defaultHeight: 700,
+    defaultWidth: screenDimensions.width,
+    defaultHeight: screenDimensions.height,
   });
 
   let x;
