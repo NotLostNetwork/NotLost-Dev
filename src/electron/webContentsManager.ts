@@ -2,11 +2,12 @@ import type { BrowserWindow } from 'electron';
 import { desktopCapturer, WebContentsView } from 'electron';
 import path from 'path';
 
-import type { WebContentsViewBounds } from '../types/electron';
+import { ElectronEvent, type WebContentsViewBounds } from '../types/electron';
 
 import { getImageAsDataURL } from './utils';
 
-type Tab = {
+export type WebContentsTab = {
+  id: string;
   view: WebContentsView;
   url: string;
   faviconUrl?: string;
@@ -18,7 +19,8 @@ export class WebContentsManager {
 
   private mainWindow!: BrowserWindow;
 
-  private tabs: Tab[] = [];
+  private tabs: WebContentsTab[] = [];
+  private currentViewId: string | undefined;
   private currentView: WebContentsView | undefined;
   private bounds: WebContentsViewBounds = {
     x: 0,
@@ -26,6 +28,25 @@ export class WebContentsManager {
     height: 0,
     width: 0,
   };
+
+  private sendTabsUpdate() {
+    this.mainWindow.webContents.send(ElectronEvent.ON_WEB_CONTENTS_TABS_CHANGE, {
+      activeTabId: this.currentView?.getVisible() ? this.currentViewId : undefined,
+      tabs: this.tabs.map((t) => ({
+        id: t.id,
+        title: t.title,
+        url: t.url,
+      })),
+    });
+  }
+
+  getTabs() {
+    return this.tabs.map((t) => ({
+      id: t.id,
+      title: t.title,
+      url: t.url,
+    }));
+  }
 
   open(url: string): Promise<{ faviconUrl?: string; title?: string }> {
     return new Promise((resolve) => {
@@ -37,7 +58,11 @@ export class WebContentsManager {
 
       if (alreadyOpenedTab) {
         this.mainWindow.contentView.addChildView(alreadyOpenedTab.view);
+        this.currentViewId = alreadyOpenedTab.id;
         this.currentView = alreadyOpenedTab.view;
+
+        this.sendTabsUpdate();
+
         return resolve({
           faviconUrl: alreadyOpenedTab.faviconUrl,
           title: alreadyOpenedTab.title,
@@ -68,11 +93,25 @@ export class WebContentsManager {
 
       const tryFinish = () => {
         if (!viewAdded && faviconUrl && title) {
-          const tab = { view: newView, url, faviconUrl, title };
+          const newTabId = crypto.randomUUID();
+
+          const tab = {
+            id: newTabId,
+            view: newView,
+            url,
+            faviconUrl,
+            title,
+          };
+
           this.tabs.push(tab);
           this.mainWindow.contentView.addChildView(newView);
           this.currentView = newView;
+          this.currentViewId = newTabId;
+
           viewAdded = true;
+
+          this.sendTabsUpdate();
+
           resolve({ faviconUrl, title });
         }
       };
@@ -100,6 +139,20 @@ export class WebContentsManager {
         }
       }, 2000); */
     });
+  }
+
+  closeTabById(tabId: string) {
+    const tab = this.tabs.find((tab) => tab.id === tabId);
+    if (!tab) {
+      return;
+    }
+
+    this.tabs = this.tabs.filter((tab) => tab.id !== tabId);
+
+    this.mainWindow.contentView.removeChildView(tab.view);
+    tab.view.webContents.close();
+
+    this.sendTabsUpdate();
   }
 
   resize(bounds: WebContentsViewBounds) {

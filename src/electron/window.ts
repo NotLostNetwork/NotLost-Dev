@@ -63,6 +63,7 @@ export function createWindow(url?: string) {
     width,
     height,
     title: getAppTitle(),
+    backgroundColor: '#181717',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       devTools: !IS_PRODUCTION,
@@ -227,6 +228,13 @@ export function setupElectronActionHandlers() {
   ipcMain.handle(ElectronAction.GET_IS_TRAY_ICON_ENABLED, () => tray.isEnabled);
 
   ipcMain.handle(ElectronAction.RESTORE_LOCAL_STORAGE, () => restoreLocalStorage());
+
+  ipcMain.handle(ElectronAction.GET_WEB_CONTENTS_TABS, () => {
+    return WebContentsManager.getInstance().getTabs();
+  });
+  ipcMain.handle(ElectronAction.CLOSE_WEB_CONTENTS_TAB, (_, tabId: string) => {
+    return WebContentsManager.getInstance().closeTabById(tabId);
+  });
   ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_BOUNDS, (_, bounds: WebContentsViewBounds) => {
     WebContentsManager.getInstance().resize(bounds);
   });

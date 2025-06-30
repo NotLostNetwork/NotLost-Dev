@@ -22,6 +22,8 @@ const electronApi: ElectronApi = {
   setIsTrayIconEnabled: (value: boolean) => ipcRenderer.invoke(ElectronAction.SET_IS_TRAY_ICON_ENABLED, value),
   getIsTrayIconEnabled: () => ipcRenderer.invoke(ElectronAction.GET_IS_TRAY_ICON_ENABLED),
   restoreLocalStorage: () => ipcRenderer.invoke(ElectronAction.RESTORE_LOCAL_STORAGE),
+  getWebContentsTabs: () => ipcRenderer.invoke(ElectronAction.GET_WEB_CONTENTS_TABS),
+  closeWebContentsTab: (tabId: string) => ipcRenderer.invoke(ElectronAction.CLOSE_WEB_CONTENTS_TAB, tabId),
   setWebContentsViewBounds: (bounds: WebContentsViewBounds) =>
     ipcRenderer.invoke(ElectronAction.SET_WEB_CONTENTS_VIEW_BOUNDS, bounds),
   setWebContentsViewUrl: (url: string) => ipcRenderer.invoke(ElectronAction.SET_WEB_CONTENTS_VIEW_URL, url),
