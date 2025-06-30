@@ -5,10 +5,9 @@ import { getActions, withGlobal } from '../../../../global';
 import type { ApiWorkspace, ApiWorkspaceChatFolder } from '../../../../api/notlost/types';
 
 import buildClassName from '../../../../util/buildClassName';
-import { ChatAnimationTypes } from '../hooks';
 
 import Icon from '../../../common/icons/Icon';
-import Chat from '../Chat';
+import WorkspaceChat from './WorkspaceChat';
 import WorkspaceChatFolder from './WorkspaceChatFolder';
 import WorkspaceChatFolderNew from './WorkspaceChatFolderNew';
 import WorkspaceLink from './WorkspaceLink';
@@ -71,7 +70,7 @@ const Workspace: FC<OwnProps & StateProps> = ({
   useEffect(() => {
     // reset active entity when workspace changes
     handleUnselectEntityForChatsAdd();
-  }, [handleUnselectEntityForChatsAdd, workspace]);
+  }, [handleUnselectEntityForChatsAdd, workspace.id]);
 
   const containerClassName = buildClassName(
     styles.container,
@@ -107,12 +106,10 @@ const Workspace: FC<OwnProps & StateProps> = ({
       </div>
       <div className={styles.chats}>
         {workspace?.chats.map((chat) => (
-          <Chat
+          <WorkspaceChat
+            key={chat.chatId}
+            workspaceId={workspace.id}
             chatId={chat.chatId}
-            orderDiff={0}
-            animationType={ChatAnimationTypes.Opacity}
-            isStatic
-            avatarSize="tiny"
           />
         ))}
       </div>
@@ -125,6 +122,7 @@ const Workspace: FC<OwnProps & StateProps> = ({
           {workspace.chatFolders.map((chatFolder) => (
             <WorkspaceChatFolder
               key={chatFolder.id}
+              workspaceId={workspace.id}
               chatFolder={chatFolder}
               isHighlighted={activeEntity?.id === chatFolder.id}
               selectForAddingChats={() => handleSetActiveEntity(chatFolder, 'chatFolder')}

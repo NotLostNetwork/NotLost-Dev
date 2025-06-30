@@ -11,16 +11,19 @@ import { compact } from '../../../../util/iteratees';
 
 import Accordion from '../../../ui/accordion/Accordion';
 import AccordionSavedState from '../../../ui/accordion/AccordionSavedState';
+import WorkspaceChat from './WorkspaceChat';
 
 import styles from './Workspace.module.scss';
 
 type OwnProps = {
+  workspaceId: string;
   chatFolder: ApiWorkspaceChatFolder;
   isHighlighted?: boolean;
   selectForAddingChats?: NoneToVoidFunction;
 };
 
 const WorkspaceChatFolder: FC<OwnProps> = ({
+  workspaceId,
   chatFolder,
   isHighlighted,
   selectForAddingChats,
@@ -81,7 +84,6 @@ const WorkspaceChatFolder: FC<OwnProps> = ({
           key={chatFolder.id}
           title={chatFolder.title}
           leftIconName={leftIcon}
-          chatIds={chatFolder.chats.map((c) => c.chatId)}
           isHighlighted={isHighlighted}
           isExpandedByDefault={isExpandedByDefault}
           withInnerPadding
@@ -99,7 +101,16 @@ const WorkspaceChatFolder: FC<OwnProps> = ({
           onRenameCancel={() => setIsRenaming(false)}
           contextActions={contextActions}
           className={className}
-        />
+        >
+          {chatFolder.chats.map((chat) => (
+            <WorkspaceChat
+              key={chat.chatId}
+              workspaceId={workspaceId}
+              chatId={chat.chatId}
+              chatFolderId={chatFolder.id}
+            />
+          ))}
+        </Accordion>
       )}
     </AccordionSavedState>
   );

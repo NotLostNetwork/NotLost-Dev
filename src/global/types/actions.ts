@@ -2691,6 +2691,10 @@ export interface ActionPayloads {
     workspaceId: string;
     chatIds: string[];
   };
+  deleteChatFromWorkspace: {
+    workspaceId: string;
+    chatId: string;
+  };
   addLinkIntoWorkspace: {
     workspaceId: string;
     title: string;
@@ -2715,6 +2719,10 @@ export interface ActionPayloads {
   updateChatFolderChats: {
     chatFolderId: string;
     chatIds: string[];
+  };
+  deleteChatFromChatsFolder: {
+    chatFolderId: string;
+    chatId: string;
   };
 
   // Link Folder

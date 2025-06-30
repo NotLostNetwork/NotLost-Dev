@@ -6,9 +6,6 @@ import type { MenuItemContextAction } from '../ListItem';
 
 import buildClassName from '../../../util/buildClassName';
 
-import { ChatAnimationTypes } from '../../left/main/hooks/useChatAnimationType';
-
-import Chat from '../../left/main/Chat';
 import ListItem from '../ListItem';
 import AccordionHeader from './AccordionHeader';
 
@@ -16,7 +13,6 @@ import './Accordion.scss';
 
 type OwnProps = {
   title?: string;
-  chatIds?: string[];
   children?: TeactNode;
   leftIconName?: IconName;
   isHighlighted?: boolean;
@@ -37,7 +33,6 @@ type OwnProps = {
 
 const Accordion: FC<OwnProps> = ({
   title,
-  chatIds,
   children,
   isExpandedByDefault = false,
   isRenaming,
@@ -73,17 +68,8 @@ const Accordion: FC<OwnProps> = ({
     );
     return (
       <div className={innerClassName}>
-        {chatIds && chatIds.map((id) => (
-          <Chat
-            chatId={id}
-            orderDiff={0}
-            animationType={ChatAnimationTypes.Opacity}
-            isStatic
-            avatarSize="tiny"
-          />
-        ))}
         {children}
-        {chatIds?.length === 0 && !children && (
+        {!children && (
           <div className="placeholder">
             No items in
             {' '}

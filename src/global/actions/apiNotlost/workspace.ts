@@ -144,6 +144,31 @@ addActionHandler('updateWorkspaceChats', (global, actions, payload): ActionRetur
   setGlobal(global);
 });
 
+addActionHandler('deleteChatFromWorkspace', (global, actions, payload): ActionReturnType => {
+  const { workspaceId, chatId } = payload;
+
+  const workspace = global.workspaces.byOrder.find((w) => w.id === workspaceId);
+  if (!workspace) return;
+
+  const updatedChatIds = workspace.chats.filter((c) => c.chatId !== chatId).map((c) => c.chatId);
+  ApiWorkspaceLayer.updateWorkspaceChats(workspaceId, updatedChatIds);
+
+  const updatedWorkspace: ApiWorkspace = {
+    ...workspace,
+    chats: (workspace.chats ?? []).filter((c) => c.chatId !== chatId),
+  };
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => (w.id === workspace.id ? updatedWorkspace : w)),
+    },
+  };
+
+  setGlobal(global);
+});
+
 addActionHandler('addLinkIntoWorkspace', (global, actions, payload): ActionReturnType => {
   const { workspaceId, title, url } = payload;
 
@@ -312,6 +337,43 @@ addActionHandler('updateChatFolderChats', (global, actions, payload): ActionRetu
             chatFolders: w.chatFolders.map((f) => {
               if (f.id === chatFolderId) {
                 return { ...f, chats: updatedChats };
+              }
+              return f;
+            }),
+          };
+        }
+
+        return w;
+      }),
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('deleteChatFromChatsFolder', (global, actions, payload): ActionReturnType => {
+  const { chatFolderId, chatId } = payload;
+
+  const workspace = findWorkspaceByChatFolderId(global.workspaces.byOrder, chatFolderId);
+  if (!workspace) return;
+
+  const chatFolder = workspace.chatFolders.find((f) => f.id === chatFolderId);
+  if (!chatFolder) return;
+
+  const updatedChatIds = chatFolder.chats.filter((c) => c.chatId !== chatId).map((c) => c.chatId);
+  ApiWorkspaceLayer.updateChatFolderChats(chatFolderId, updatedChatIds);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: global.workspaces.byOrder.map((w) => {
+        if (w.id === workspace.id) {
+          return {
+            ...w,
+            chatFolders: w.chatFolders.map((f) => {
+              if (f.id === chatFolderId) {
+                return { ...f, chats: updatedChatIds.map((id) => ({ chatId: id })) };
               }
               return f;
             }),

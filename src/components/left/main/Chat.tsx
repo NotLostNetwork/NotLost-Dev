@@ -18,6 +18,7 @@ import type {
 } from '../../../api/types';
 import type { ObserveFn } from '../../../hooks/useIntersectionObserver';
 import type { AvatarSize } from '../../common/Avatar';
+import type { MenuItemContextAction } from '../../ui/ListItem';
 import type { ChatAnimationTypes } from './hooks';
 import { MAIN_THREAD_ID } from '../../../api/types';
 import { StoryViewerOrigin } from '../../../types';
@@ -90,6 +91,7 @@ type OwnProps = {
   previewMessageId?: number;
   className?: string;
   observeIntersection?: ObserveFn;
+  contextActions?: MenuItemContextAction[];
   onDragEnter?: (chatId: string) => void;
 };
 
@@ -158,6 +160,7 @@ const Chat: FC<OwnProps & StateProps> = ({
   isSynced,
   onDragEnter,
   isAccountFrozen,
+  contextActions: contextActionsProp,
 }) => {
   const {
     openChat,
@@ -366,7 +369,7 @@ const Chat: FC<OwnProps & StateProps> = ({
       href={href}
       style={`top: ${offsetTop}px;`}
       ripple={!isForum && !isMobile}
-      contextActions={contextActions}
+      contextActions={contextActionsProp || contextActions}
       onClick={handleClick}
       onDragEnter={handleDragEnter}
       withPortalForMenu
