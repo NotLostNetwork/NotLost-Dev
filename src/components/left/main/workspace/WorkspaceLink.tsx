@@ -1,11 +1,12 @@
 import type { FC } from '@teact';
-import { memo, useCallback, useMemo, useState } from '@teact';
+import { memo, useCallback, useEffect, useMemo, useState } from '@teact';
 import { getActions } from '../../../../global';
 
 import type { MenuItemContextAction } from '../../../ui/ListItem';
 
 import buildClassName from '../../../../util/buildClassName';
 import { compact } from '../../../../util/iteratees';
+import WebContentsFaviconsStorage from '../../../../api/notlost/webContents';
 
 import Icon from '../../../common/icons/Icon';
 import ListItem from '../../../ui/ListItem';
@@ -27,13 +28,17 @@ const WorkspaceLink: FC<OwnProps> = ({
 }) => {
   const { setWorkspaceSelectedItemId, openChat, deleteLinkFromWorkspace } = getActions();
 
-  const [faviconUrl, setFaviconUrl] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState<string | undefined>(undefined);
 
   const handleClick = () => {
     setWorkspaceSelectedItemId(id);
     openChat({ id: undefined });
     window.electron?.setWebContentsViewUrl(url).then((res) => {
-      setFaviconUrl(res.faviconUrl || '');
+      if (!faviconUrl) {
+        WebContentsFaviconsStorage.addFavicon(url, res.faviconUrl || '');
+        setFaviconUrl(res.faviconUrl || '');
+      }
+
       window.electron?.setWebContentsViewVisible(true);
     });
   };
@@ -62,6 +67,14 @@ const WorkspaceLink: FC<OwnProps> = ({
 
     return compact([actionDelete]);
   }, [handleDelete]);
+
+  useEffect(() => {
+    WebContentsFaviconsStorage.getFavicon(url).then((cachedFavicon) => {
+      if (cachedFavicon) {
+        setFaviconUrl(cachedFavicon);
+      }
+    });
+  }, [url]);
 
   const listItemClassName = buildClassName(
     styles.customListItem,

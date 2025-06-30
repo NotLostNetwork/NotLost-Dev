@@ -2,9 +2,12 @@ import type { IconName } from '../../types/icons';
 
 export const NotLostLocalStorageKeys = {
   workspaces: 'workspaces',
+  webContentsViewFavicons: 'webContentsViewFavicons',
 };
 
 export type NotLostLocalStorageKey = keyof typeof NotLostLocalStorageKeys;
+
+// Api
 
 export type ApiWorkspace = {
   id: string;
@@ -34,4 +37,11 @@ export type ApiWorkspaceChatFolder = BaseFolder & {
 };
 export type ApiWorkspaceLinkFolder = BaseFolder & {
   links: ApiWorkspaceLink[];
+};
+
+// Favicons cache
+
+export type WebContentsViewFavicon = {
+  url: string;
+  faviconUrl: string;
 };
