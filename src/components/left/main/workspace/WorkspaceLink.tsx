@@ -3,6 +3,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from '@teact';
 import { getActions } from '../../../../global';
 
 import type { MenuItemContextAction } from '../../../ui/ListItem';
+import { ElectronEvent } from '../../../../types/electron';
 
 import buildClassName from '../../../../util/buildClassName';
 import { compact } from '../../../../util/iteratees';
@@ -34,12 +35,6 @@ const WorkspaceLink: FC<OwnProps> = ({
     setWorkspaceSelectedItemId(id);
     loadWebContentsViewUrl({
       url,
-      callback: (res) => {
-        if (!faviconUrl) {
-          WebContentsFaviconsStorage.addFavicon(url, res.faviconUrl || '');
-          setFaviconUrl(res.faviconUrl || '');
-        }
-      },
     });
   };
 
@@ -50,14 +45,6 @@ const WorkspaceLink: FC<OwnProps> = ({
   }, [id]);
 
   const contextActions = useMemo(() => {
-    /* const actionRename = {
-      title: 'Rename',
-      icon: 'edit',
-      handler: () => {
-        setIsRenaming(true);
-      },
-    } satisfies MenuItemContextAction; */
-
     const actionDelete = {
       title: 'Delete',
       icon: 'delete',
@@ -68,13 +55,49 @@ const WorkspaceLink: FC<OwnProps> = ({
     return compact([actionDelete]);
   }, [handleDelete]);
 
+  const getDomain = (url: string): string => {
+    return new URL(url).hostname.replace(/^www\./, '');
+  };
+
+  const isSameDomain = useCallback((url1: string, url2: string): boolean => {
+    try {
+      const domain1 = getDomain(url1);
+      const domain2 = getDomain(url2);
+      return domain1 === domain2;
+    } catch (error) {
+      return false;
+    }
+  }, []);
+
   useEffect(() => {
-    WebContentsFaviconsStorage.getFavicon(url).then((cachedFavicon) => {
-      if (cachedFavicon) {
-        setFaviconUrl(cachedFavicon);
+    const listenForMetaDataUpdate = window.electron!.on(ElectronEvent.ON_WEB_CONTENTS_TAB_META_DATA, (data: {
+      url: string;
+      metaData: {
+        faviconUrl: string;
+        title: string;
+      };
+    }) => {
+      if (isSameDomain(data.url, url)) {
+        WebContentsFaviconsStorage.getFavicon(getDomain(url)).then((cachedFavicon) => {
+          if (!cachedFavicon) {
+            WebContentsFaviconsStorage.addFavicon(getDomain(url), data.metaData.faviconUrl || '');
+            setFaviconUrl(data.metaData.faviconUrl);
+          }
+        });
       }
     });
-  }, [url]);
+
+    WebContentsFaviconsStorage.getFavicon(getDomain(url)).then((cachedFavicon) => {
+      if (cachedFavicon) {
+        setFaviconUrl(cachedFavicon);
+        listenForMetaDataUpdate();
+      }
+    });
+
+    return () => {
+      listenForMetaDataUpdate();
+    };
+  }, [isSameDomain, url]);
 
   const listItemClassName = buildClassName(
     styles.customListItem,

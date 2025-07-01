@@ -467,6 +467,7 @@ export type GlobalState = {
   expandedState: Record<string, boolean>;
 
   webContentsViewIsLoading: boolean;
+  webContentsViewError?: string;
 
 };
 

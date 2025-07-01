@@ -2750,7 +2750,6 @@ export interface ActionPayloads {
   // Web contents view
   loadWebContentsViewUrl: {
     url: string;
-    callback?: (res: { title?: string; faviconUrl?: string }) => void;
   };
   setWebContentsViewVisible: { value: boolean };
 

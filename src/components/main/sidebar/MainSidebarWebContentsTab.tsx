@@ -1,12 +1,11 @@
 import type { FC } from '@teact';
-import { memo, useEffect, useState } from '@teact';
+import { memo, useState } from '@teact';
 import { getActions } from '../../../global';
 
 import type { ApiWorkspace } from '../../../api/notlost/types';
 import type { WebContentsTabInfo } from '../../../types/electron';
 
 import buildClassName from '../../../util/buildClassName';
-import WebContentsFaviconsStorage from '../../../api/notlost/webContents';
 
 import Icon from '../../common/icons/Icon';
 
@@ -25,16 +24,7 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
 }) => {
   const { loadWebContentsViewUrl } = getActions();
 
-  const [faviconUrl, setFaviconUrl] = useState<string | undefined>(undefined);
   const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    WebContentsFaviconsStorage.getFavicon(webContentsTab.url).then((cachedFavicon) => {
-      if (cachedFavicon) {
-        setFaviconUrl(cachedFavicon);
-      }
-    });
-  }, [webContentsTab]);
 
   const handleClick = () => {
     loadWebContentsViewUrl({
@@ -82,7 +72,6 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
 
   const linkIconContainerClassName = buildClassName(
     styles.iconContainer,
-    faviconUrl && styles.withFavicon,
   );
 
   return (

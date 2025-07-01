@@ -106,6 +106,7 @@ import MiddleHeaderPanes from './MiddleHeaderPanes';
 import PremiumRequiredPlaceholder from './PremiumRequiredPlaceholder';
 import ReactorListModal from './ReactorListModal.async';
 import MiddleSearch from './search/MiddleSearch.async';
+import WebContentsError from './WebContentsError';
 
 import './MiddleColumn.scss';
 import styles from './MiddleColumn.module.scss';
@@ -166,6 +167,7 @@ type StateProps = {
   freezeAppealChat?: ApiChat;
   workspaceSidebarIsOpen?: boolean;
   webContentsViewIsLoading?: boolean;
+  webContentsViewError?: string;
 };
 
 function isImage(item: DataTransferItem) {
@@ -231,6 +233,7 @@ function MiddleColumn({
   freezeAppealChat,
   workspaceSidebarIsOpen,
   webContentsViewIsLoading,
+  webContentsViewError,
 }: OwnProps & StateProps) {
   const {
     openChat,
@@ -557,6 +560,7 @@ function MiddleColumn({
       <div id="middle-column-portals" />
       <div id="middle-column-left-sidebar-portals" style="height: 100%" />
       {webContentsViewIsLoading && <div className="webContentsShimmer" />}
+      {webContentsViewError && <WebContentsError errorMessage={webContentsViewError} />}
       {Boolean(renderingChatId && renderingThreadId) && (
         <>
           <div className="messages-layout" onDragEnter={renderingCanPost ? handleDragEnter : undefined}>
@@ -800,6 +804,7 @@ export default memo(withGlobal<OwnProps>(
       leftColumnWidth,
       workspaceSidebarIsOpen: global.workspaces.sidebarIsOpen,
       webContentsViewIsLoading: global.webContentsViewIsLoading,
+      webContentsViewError: global.webContentsViewError,
     };
 
     if (!currentMessageList) {

@@ -4,6 +4,7 @@ export enum ElectronEvent {
   UPDATE_AVAILABLE = 'update-available',
   DEEPLINK = 'deeplink',
   ON_WEB_CONTENTS_TABS_CHANGE = 'on-web-contents-tabs-change',
+  ON_WEB_CONTENTS_TAB_META_DATA = 'on-web-contents-tab-meta-data',
 }
 
 export enum ElectronAction {
@@ -60,7 +61,7 @@ export interface ElectronApi {
   getWebContentsTabs: () => Promise<WebContentsTabInfo[]>;
   closeWebContentsTab: (tabId: string) => Promise<void>;
   setWebContentsViewBounds: (bounds: WebContentsViewBounds) => Promise<void>;
-  setWebContentsViewUrl: (url: string) => Promise<{ faviconUrl?: string; title?: string }>;
+  setWebContentsViewUrl: (url: string) => Promise<void>;
   setWebContentsViewVisible: (isVisible: boolean) => Promise<void>;
 
   on: (eventName: ElectronEvent, callback: any) => VoidFunction;

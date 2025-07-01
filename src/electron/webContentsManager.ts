@@ -14,6 +14,11 @@ export type WebContentsTab = {
   title?: string;
 };
 
+type MetaData = {
+  faviconUrl?: string;
+  title?: string;
+};
+
 export class WebContentsManager {
   private static instance: WebContentsManager;
 
@@ -48,8 +53,8 @@ export class WebContentsManager {
     }));
   }
 
-  open(url: string): Promise<{ faviconUrl?: string; title?: string }> {
-    return new Promise((resolve) => {
+  async open(url: string) {
+    try {
       if (this.currentView) {
         this.mainWindow.contentView.removeChildView(this.currentView);
       }
@@ -60,13 +65,8 @@ export class WebContentsManager {
         this.mainWindow.contentView.addChildView(alreadyOpenedTab.view);
         this.currentViewId = alreadyOpenedTab.id;
         this.currentView = alreadyOpenedTab.view;
-
         this.sendTabsUpdate();
-
-        return resolve({
-          faviconUrl: alreadyOpenedTab.faviconUrl,
-          title: alreadyOpenedTab.title,
-        });
+        return;
       }
 
       const newView = new WebContentsView({
@@ -85,59 +85,71 @@ export class WebContentsManager {
       });
 
       newView.setBounds(this.bounds);
-      newView.webContents.loadURL(url);
 
-      let faviconUrl: string | undefined;
-      let title: string | undefined;
-      let viewAdded = false;
+      await newView.webContents.loadURL(url);
 
-      const tryFinish = () => {
-        if (!viewAdded && faviconUrl && title) {
-          const newTabId = crypto.randomUUID();
+      const newTabId = crypto.randomUUID();
 
-          const tab = {
-            id: newTabId,
-            view: newView,
-            url,
-            faviconUrl,
-            title,
-          };
-
-          this.tabs.push(tab);
-          this.mainWindow.contentView.addChildView(newView);
-          this.currentView = newView;
-          this.currentViewId = newTabId;
-
-          viewAdded = true;
-
-          this.sendTabsUpdate();
-
-          resolve({ faviconUrl, title });
-        }
+      const tab = {
+        id: newTabId,
+        view: newView,
+        url,
       };
 
-      newView.webContents.once('page-favicon-updated', (e, icons) => {
-        getImageAsDataURL(icons[0]).then((dataUrl) => {
-          faviconUrl = dataUrl;
-          tryFinish();
+      this.tabs.push(tab);
+      this.mainWindow.contentView.addChildView(newView);
+      this.currentView = newView;
+      this.currentViewId = newTabId;
+      this.sendTabsUpdate();
+
+      this.addMetaDataListeners(newView, url);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to open URL "${url}": ${errorMessage}`);
+    }
+  }
+
+  private addMetaDataListeners(newView: WebContentsView, url: string) {
+    const sendMetaData = ({
+      faviconUrl,
+      title,
+    }: MetaData) => {
+      if (faviconUrl || title) {
+        this.mainWindow.webContents.send(ElectronEvent.ON_WEB_CONTENTS_TAB_META_DATA, {
+          // IMPORTANT: Use the original entry URL, not newView.webContents.getURL()
+          // The current URL might have changed due to redirects (e.g., https://chat.com -> https://chatgpt.com),
+          // but we want to cache favicons/metadata against the URL the user originally entered
+          // This ensures consistent caching and retrieval regardless of redirect behavior
+          url,
+          metaData: {
+            faviconUrl,
+            title,
+          },
         });
-      });
+      }
+    };
 
-      newView.webContents.once('page-title-updated', (e, newTitle) => {
-        title = newTitle;
-        tryFinish();
-      });
-
-      /* setTimeout(() => {
-        if (!viewAdded) {
-          const tab = { view: newView, url, faviconUrl, title };
-          this.tabs.push(tab);
-          this.mainWindow.contentView.addChildView(newView);
-          this.currentView = newView;
-          viewAdded = true;
-          resolve({ faviconUrl, title });
+    newView.webContents.on('page-favicon-updated', (e, icons) => {
+      const readyToDisplayImageData = icons.find((i) => i.includes('data:image'));
+      if (readyToDisplayImageData) {
+        sendMetaData({
+          faviconUrl: readyToDisplayImageData,
+        });
+        return;
+      }
+      getImageAsDataURL(icons[0]).then((dataUrl) => {
+        if (dataUrl.length > 0) {
+          sendMetaData(
+            { faviconUrl: dataUrl },
+          );
         }
-      }, 2000); */
+      });
+    });
+
+    newView.webContents.once('page-title-updated', (e, newTitle) => {
+      sendMetaData({
+        title: newTitle,
+      });
     });
   }
 
@@ -150,7 +162,12 @@ export class WebContentsManager {
     this.tabs = this.tabs.filter((tab) => tab.id !== tabId);
 
     this.mainWindow.contentView.removeChildView(tab.view);
-    tab.view.webContents.close();
+    try {
+      tab.view.webContents.close();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
 
     this.sendTabsUpdate();
   }

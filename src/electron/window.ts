@@ -238,9 +238,10 @@ export function setupElectronActionHandlers() {
   ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_BOUNDS, (_, bounds: WebContentsViewBounds) => {
     WebContentsManager.getInstance().resize(bounds);
   });
-  ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_URL, (_, url: string) => {
-    return WebContentsManager.getInstance().open(url);
-  });
+  ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_URL,
+    (_, url: string) => {
+      return WebContentsManager.getInstance().open(url);
+    });
   ipcMain.handle(ElectronAction.SET_WEB_CONTENTS_VIEW_VISIBLE, (_, isVisible: boolean) => {
     WebContentsManager.getInstance().setCurrentViewVisible(isVisible);
   });
