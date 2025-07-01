@@ -26,20 +26,20 @@ const WorkspaceLink: FC<OwnProps> = ({
   title,
   selected,
 }) => {
-  const { setWorkspaceSelectedItemId, openChat, deleteLinkFromWorkspace } = getActions();
+  const { setWorkspaceSelectedItemId, deleteLinkFromWorkspace, loadWebContentsViewUrl } = getActions();
 
   const [faviconUrl, setFaviconUrl] = useState<string | undefined>(undefined);
 
   const handleClick = () => {
     setWorkspaceSelectedItemId(id);
-    openChat({ id: undefined });
-    window.electron?.setWebContentsViewUrl(url).then((res) => {
-      if (!faviconUrl) {
-        WebContentsFaviconsStorage.addFavicon(url, res.faviconUrl || '');
-        setFaviconUrl(res.faviconUrl || '');
-      }
-
-      window.electron?.setWebContentsViewVisible(true);
+    loadWebContentsViewUrl({
+      url,
+      callback: (res) => {
+        if (!faviconUrl) {
+          WebContentsFaviconsStorage.addFavicon(url, res.faviconUrl || '');
+          setFaviconUrl(res.faviconUrl || '');
+        }
+      },
     });
   };
 

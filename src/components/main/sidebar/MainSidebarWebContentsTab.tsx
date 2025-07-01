@@ -23,7 +23,7 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
   workspaces,
   isActive,
 }) => {
-  const { openChat } = getActions();
+  const { loadWebContentsViewUrl } = getActions();
 
   const [faviconUrl, setFaviconUrl] = useState<string | undefined>(undefined);
   const [isHovered, setIsHovered] = useState(false);
@@ -37,9 +37,8 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
   }, [webContentsTab]);
 
   const handleClick = () => {
-    openChat({ id: undefined });
-    window.electron!.setWebContentsViewUrl(webContentsTab.url).then(() => {
-      window.electron!.setWebContentsViewVisible(true);
+    loadWebContentsViewUrl({
+      url: webContentsTab.url,
     });
   };
 

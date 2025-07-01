@@ -212,6 +212,26 @@
     }
   }
 
+  .webContentsShimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: var(--z-middle-web-contents-shimmer);
+
+    background: linear-gradient(-45deg, var(--color-background-darkest) 40%, var(--color-background) 50%, var(--color-background-darkest) 60%);
+    background-size: 400%;
+    background-position-x: 100%;
+    animation: shimmer 1s infinite ease-in-out;
+  }
+
+  @keyframes shimmer {
+    to {
+      background-position-x: 0%
+    }
+  }
+
   @media (max-width: 600px) {
     overflow: hidden;
   }

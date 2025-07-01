@@ -165,6 +165,7 @@ type StateProps = {
   isAccountFrozen?: boolean;
   freezeAppealChat?: ApiChat;
   workspaceSidebarIsOpen?: boolean;
+  webContentsViewIsLoading?: boolean;
 };
 
 function isImage(item: DataTransferItem) {
@@ -229,6 +230,7 @@ function MiddleColumn({
   isAccountFrozen,
   freezeAppealChat,
   workspaceSidebarIsOpen,
+  webContentsViewIsLoading,
 }: OwnProps & StateProps) {
   const {
     openChat,
@@ -554,6 +556,7 @@ function MiddleColumn({
       />
       <div id="middle-column-portals" />
       <div id="middle-column-left-sidebar-portals" style="height: 100%" />
+      {webContentsViewIsLoading && <div className="webContentsShimmer" />}
       {Boolean(renderingChatId && renderingThreadId) && (
         <>
           <div className="messages-layout" onDragEnter={renderingCanPost ? handleDragEnter : undefined}>
@@ -796,6 +799,7 @@ export default memo(withGlobal<OwnProps>(
       activeEmojiInteractions,
       leftColumnWidth,
       workspaceSidebarIsOpen: global.workspaces.sidebarIsOpen,
+      webContentsViewIsLoading: global.webContentsViewIsLoading,
     };
 
     if (!currentMessageList) {

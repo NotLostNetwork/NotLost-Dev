@@ -249,11 +249,6 @@ addActionHandler('openChat', (global, actions, payload): ActionReturnType => {
   actions.setWebContentsViewVisible({
     value: false,
   });
-  /* setTimeout(() => {
-    actions.setWebContentsViewVisible({
-      value: false,
-    });
-  }, 100); */
 });
 
 addActionHandler('openSavedDialog', (global, actions, payload): ActionReturnType => {
