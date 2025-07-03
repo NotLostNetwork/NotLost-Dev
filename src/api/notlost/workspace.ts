@@ -1,5 +1,5 @@
 import type { ApiWorkspace, ApiWorkspaceChatFolder, ApiWorkspaceLink, ApiWorkspaceLinkFolder } from './types';
-import { NotLostLocalStorageKeys } from './types';
+import { MAX_WORKSPACES, NotLostLocalStorageKeys } from './types';
 
 import { MAIN_IDB_STORE } from '../../util/browser/idb';
 
@@ -27,7 +27,13 @@ class ApiWorkspaceLayer {
   addWorkspace = async (newWorkspace: ApiWorkspace): Promise<void> => {
     await this.store.update<ApiWorkspace[]>(
       NotLostLocalStorageKeys.workspaces,
-      (old = []) => [...old, newWorkspace],
+      (old = []) => {
+        if (old.length < MAX_WORKSPACES) {
+          return [...old, newWorkspace];
+        }
+
+        return old;
+      },
     );
   };
 

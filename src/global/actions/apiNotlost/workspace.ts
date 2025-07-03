@@ -50,7 +50,40 @@ addActionHandler('loadAllWorkspaces', async (global): Promise<void> => {
   setGlobal(global);
 });
 
-addActionHandler('addNewWorkspace', (global, actions, payload): ActionReturnType => {
+addActionHandler('createInitialWorkspace', (global, actions, payload): ActionReturnType => {
+  const pinnedChatIds = global.chats.orderedPinnedIds.active?.map((chatId) => ({ chatId })) || [];
+  const chatFolders: ApiWorkspaceChatFolder[] = Object.values(global.chatFolders.byId).map((tgChatFolder) => {
+    return {
+      id: crypto.randomUUID(),
+      title: tgChatFolder.title.text,
+      chats: tgChatFolder.includedChatIds.map((chatId) => ({ chatId })),
+    };
+  });
+
+  const newWorkspace: ApiWorkspace = {
+    id: crypto.randomUUID(),
+    title: 'Personal',
+    iconName: 'lamp',
+    chats: pinnedChatIds,
+    links: [],
+    chatFolders,
+    linkFolders: [],
+  };
+
+  ApiWorkspaceLayer.addWorkspace(newWorkspace);
+
+  global = {
+    ...global,
+    workspaces: {
+      ...global.workspaces,
+      byOrder: [...global.workspaces.byOrder, newWorkspace],
+    },
+  };
+
+  setGlobal(global);
+});
+
+addActionHandler('addNewWorkspace', async (global, actions, payload): Promise<void> => {
   const { title, iconName } = payload;
 
   const newWorkspace: ApiWorkspace = {
@@ -63,7 +96,7 @@ addActionHandler('addNewWorkspace', (global, actions, payload): ActionReturnType
     linkFolders: [],
   };
 
-  ApiWorkspaceLayer.addWorkspace(newWorkspace);
+  await ApiWorkspaceLayer.addWorkspace(newWorkspace);
 
   global = {
     ...global,

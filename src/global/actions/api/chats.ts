@@ -1094,6 +1094,7 @@ addActionHandler('loadChatFolders', async (global): Promise<void> => {
       chatFolders: {
         ...global.chatFolders,
         ...chatFolders,
+        areLoaded: true,
       },
     };
     setGlobal(global);

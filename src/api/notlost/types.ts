@@ -1,5 +1,7 @@
 import type { IconName } from '../../types/icons';
 
+export const MAX_WORKSPACES = 3;
+
 export const NotLostLocalStorageKeys = {
   workspaces: 'workspaces',
   webContentsViewFavicons: 'webContentsViewFavicons',
