@@ -22,7 +22,7 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
   workspaces,
   isActive,
 }) => {
-  const { loadWebContentsViewUrl, closeWebContentsView } = getActions();
+  const { loadWebContentsViewUrl, closeWebContentsTab } = getActions();
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -34,7 +34,9 @@ const MainSidebarWebContentsTab: FC<OwnProps> = ({
 
   const handleCloseTab = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
-    closeWebContentsView();
+    closeWebContentsTab({
+      tabId: webContentsTab.id,
+    });
   };
 
   const getWorkspaceLinkRelatedToTab = () => {

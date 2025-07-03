@@ -98,6 +98,8 @@ addActionHandler('addNewWorkspace', async (global, actions, payload): Promise<vo
 
   await ApiWorkspaceLayer.addWorkspace(newWorkspace);
 
+  global = getGlobal();
+
   global = {
     ...global,
     workspaces: {

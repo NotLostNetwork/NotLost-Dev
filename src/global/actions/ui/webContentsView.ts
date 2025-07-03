@@ -52,3 +52,17 @@ addActionHandler('closeWebContentsView', (global, actions, payload): ActionRetur
 
   window.electron?.setWebContentsViewVisible(false);
 });
+
+addActionHandler('closeWebContentsTab', (global, actions, payload): ActionReturnType => {
+  const { tabId } = payload;
+
+  global = {
+    ...global,
+    webContentsViewIsVisible: false,
+    webContentsViewIsLoading: false,
+    webContentsViewError: undefined,
+  };
+  setGlobal(global);
+
+  window.electron?.closeWebContentsTab(tabId);
+});

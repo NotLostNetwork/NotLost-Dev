@@ -2753,6 +2753,9 @@ export interface ActionPayloads {
     url: string;
   };
   closeWebContentsView: undefined;
+  closeWebContentsTab: {
+    tabId: string;
+  };
 
 }
 
