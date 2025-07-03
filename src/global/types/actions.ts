@@ -2751,7 +2751,7 @@ export interface ActionPayloads {
   loadWebContentsViewUrl: {
     url: string;
   };
-  setWebContentsViewVisible: { value: boolean };
+  closeWebContentsView: undefined;
 
 }
 

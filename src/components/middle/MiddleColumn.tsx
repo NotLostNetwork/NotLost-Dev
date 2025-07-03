@@ -99,6 +99,7 @@ import { DropAreaState } from './composer/DropArea';
 import EmojiInteractionAnimation from './EmojiInteractionAnimation.async';
 import FloatingActionButtons from './FloatingActionButtons';
 import FrozenAccountPlaceholder from './FrozenAccountPlaceholder';
+import GreetingsBlock from './GreetingsBlock';
 import MessageList from './MessageList';
 import MessageSelectToolbar from './MessageSelectToolbar.async';
 import MiddleHeader from './MiddleHeader';
@@ -168,6 +169,7 @@ type StateProps = {
   workspaceSidebarIsOpen?: boolean;
   webContentsViewIsLoading?: boolean;
   webContentsViewError?: string;
+  webContentsViewIsVisible?: boolean;
 };
 
 function isImage(item: DataTransferItem) {
@@ -234,6 +236,7 @@ function MiddleColumn({
   workspaceSidebarIsOpen,
   webContentsViewIsLoading,
   webContentsViewError,
+  webContentsViewIsVisible,
 }: OwnProps & StateProps) {
   const {
     openChat,
@@ -561,6 +564,7 @@ function MiddleColumn({
       <div id="middle-column-left-sidebar-portals" style="height: 100%" />
       {webContentsViewIsLoading && <div className="webContentsShimmer" />}
       {webContentsViewError && <WebContentsError errorMessage={webContentsViewError} />}
+      {!chatId && !webContentsViewIsVisible && <GreetingsBlock />}
       {Boolean(renderingChatId && renderingThreadId) && (
         <>
           <div className="messages-layout" onDragEnter={renderingCanPost ? handleDragEnter : undefined}>
@@ -804,6 +808,7 @@ export default memo(withGlobal<OwnProps>(
       leftColumnWidth,
       workspaceSidebarIsOpen: global.workspaces.sidebarIsOpen,
       webContentsViewIsLoading: global.webContentsViewIsLoading,
+      webContentsViewIsVisible: global.webContentsViewIsVisible,
       webContentsViewError: global.webContentsViewError,
     };
 

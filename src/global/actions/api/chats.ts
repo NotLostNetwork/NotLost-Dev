@@ -246,9 +246,7 @@ addActionHandler('openChat', (global, actions, payload): ActionReturnType => {
   }
 
   actions.setWorkspaceSelectedItemId(undefined);
-  actions.setWebContentsViewVisible({
-    value: false,
-  });
+  actions.closeWebContentsView();
 });
 
 addActionHandler('openSavedDialog', (global, actions, payload): ActionReturnType => {

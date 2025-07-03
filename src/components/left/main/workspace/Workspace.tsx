@@ -159,11 +159,6 @@ const Workspace: FC<OwnProps & StateProps> = ({
           )}
         </WorkspaceSection>
       )}
-
-      {/* <WorkspaceSection sectionTitle="Notes">
-        <WorkspaceNote url="https://notion.so" title="Meet notes" id="5" selected={selectedItemId === '5'} />
-        <WorkspaceNote url="https://www.notion.so/new" title="Todo tomorrow" id="6" selected={selectedItemId === '6'} />
-      </WorkspaceSection> */}
       <WorkspaceRightSidebar
         activeEntity={activeEntity}
         activeEntityType={activeEntityType}

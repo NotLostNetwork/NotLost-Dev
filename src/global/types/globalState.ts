@@ -466,9 +466,9 @@ export type GlobalState = {
   };
   expandedState: Record<string, boolean>;
 
-  webContentsViewIsLoading: boolean;
+  webContentsViewIsLoading?: boolean;
+  webContentsViewIsVisible?: boolean;
   webContentsViewError?: string;
-
 };
 
 export type RequiredGlobalState = GlobalState & { _: never };

@@ -23,6 +23,7 @@ addActionHandler('loadWebContentsViewUrl', (global, actions, payload): ActionRet
       global = {
         ...global,
         webContentsViewIsLoading: false,
+        webContentsViewIsVisible: true,
       };
 
       setGlobal(global);
@@ -32,6 +33,7 @@ addActionHandler('loadWebContentsViewUrl', (global, actions, payload): ActionRet
       global = {
         ...global,
         webContentsViewIsLoading: false,
+        webContentsViewIsVisible: false,
         webContentsViewError: e,
       };
 
@@ -39,15 +41,14 @@ addActionHandler('loadWebContentsViewUrl', (global, actions, payload): ActionRet
     });
 });
 
-addActionHandler('setWebContentsViewVisible', (global, actions, payload): ActionReturnType => {
-  const { value } = payload;
-
+addActionHandler('closeWebContentsView', (global, actions, payload): ActionReturnType => {
   global = {
     ...global,
+    webContentsViewIsVisible: false,
     webContentsViewIsLoading: false,
     webContentsViewError: undefined,
   };
   setGlobal(global);
 
-  window.electron?.setWebContentsViewVisible(value);
+  window.electron?.setWebContentsViewVisible(false);
 });
